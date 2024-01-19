@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1092561827664",
+    "project_id": "rescuepaws-413eb",
+    "storage_bucket": "rescuepaws-413eb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1092561827664:android:89a930253da65faf3b1e55",
+        "android_client_info": {
+          "package_name": "ukim.finki.mis.resecue_paws"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANO6vRva3XhzoYja9-mtv5tTfsnYKWRLQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
