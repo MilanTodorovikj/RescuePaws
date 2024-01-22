@@ -24,6 +24,9 @@ class _NewLostPetState extends State<NewLostPet> {
   final _personNameController = TextEditingController();
   final _contactPhoneController = TextEditingController();
   GeoPoint? _selectedLocation; // Store the selected location
+  String _selectedGender = "";
+  String _selectedAge = "";
+  bool _collar = true;
 
   @override
   void initState() {
@@ -91,6 +94,8 @@ class _NewLostPetState extends State<NewLostPet> {
         foundPlace.isEmpty ||
         personName.isEmpty ||
         contactPhone.isEmpty ||
+        _selectedGender.isEmpty ||
+        _selectedAge.isEmpty ||
         _selectedLocation == null) {
       return;
     }
@@ -99,9 +104,9 @@ class _NewLostPetState extends State<NewLostPet> {
       petType,
       breed,
       color,
-      "age",
-      "gender",
-      true,
+      _selectedAge,
+      _selectedGender,
+      _collar,
       foundPlace,
       personName,
       contactPhone,
@@ -135,6 +140,105 @@ class _NewLostPetState extends State<NewLostPet> {
               decoration: const InputDecoration(labelText: 'Color/Pattern'),
               controller: _colorController,
               onSubmitted: (_) => _submitData(),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Row(
+                  children: [
+                    Radio(
+                      value: 'Young',
+                      groupValue: _selectedAge,
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedAge = value.toString();
+                        });
+                      },
+                    ),
+                    Text('Young'),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Radio(
+                      value: 'Mature',
+                      groupValue: _selectedAge,
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedAge = value.toString();
+                        });
+                      },
+                    ),
+                    Text('Mature'),
+                  ],
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Row(
+                  children: [
+                    Radio(
+                      value: 'Male',
+                      groupValue: _selectedGender,
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedGender = value.toString();
+                        });
+                      },
+                    ),
+                    Text('Male'),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Radio(
+                      value: 'Female',
+                      groupValue: _selectedGender,
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedGender = value.toString();
+                        });
+                      },
+                    ),
+                    Text('Female'),
+                  ],
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Row(
+                  children: [
+                    Radio(
+                      value: true,
+                      groupValue: _collar,
+                      onChanged: (value) {
+                        setState(() {
+                          _collar = value!;
+                        });
+                      },
+                    ),
+                    Text('Yes'),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Radio(
+                      value: false,
+                      groupValue: _collar,
+                      onChanged: (value) {
+                        setState(() {
+                          _collar = value!;
+                        });
+                      },
+                    ),
+                    Text('No'),
+                  ],
+                ),
+              ],
             ),
             TextField(
               decoration: const InputDecoration(labelText: 'Found place'),
