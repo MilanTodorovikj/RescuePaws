@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:resecue_paws/models/Post.dart';
 
-import 'add_lost_pet_screen.dart';
+import 'add_pet_post_screen.dart';
 
 
 class LostPetsScreen extends StatefulWidget {
@@ -182,7 +182,7 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => NewLostPet(addLostPet: _addNewLostPetToDatabase,)));
+            builder: (context) => NewLostPet(addLostPet: _addNewLostPetToDatabase,formType: "lost")));
   }
 
 
