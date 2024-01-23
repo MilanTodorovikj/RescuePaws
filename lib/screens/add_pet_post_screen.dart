@@ -9,8 +9,9 @@ import 'map_screen.dart';
 
 class NewLostPet extends StatefulWidget {
   final Function addLostPet;
+  final String formType;
 
-  const NewLostPet({Key? key, required this.addLostPet}) : super(key: key);
+  const NewLostPet({Key? key, required this.addLostPet, required this.formType}) : super(key: key);
 
   @override
   _NewLostPetState createState() => _NewLostPetState();
@@ -274,8 +275,8 @@ class _NewLostPetState extends State<NewLostPet> {
                 fixedSize: const Size.fromWidth(500),
               ),
               onPressed: _submitData,
-              child: const Text(
-                'Add Lost Pet',
+              child: Text(
+                'Add '+ this.widget.formType + ' Pet',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
