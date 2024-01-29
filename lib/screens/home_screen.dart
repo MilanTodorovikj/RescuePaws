@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../models/Post.dart';
 import 'found_pets_screen.dart';
 import 'lost_pets_screen.dart';
 
@@ -65,7 +66,7 @@ class Home extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => LostPetsScreen()),
+                  MaterialPageRoute(builder: (context) => LostPetsScreen(postFactory: Post.defaultPost(),)),
                 );
               },
               style: ElevatedButton.styleFrom(
@@ -84,7 +85,7 @@ class Home extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => FoundPetsScreen()),
+                  MaterialPageRoute(builder: (context) => FoundPetsScreen(postFactory: Post.defaultPost(),)),
                 );
               },
               style: ElevatedButton.styleFrom(

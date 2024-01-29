@@ -5,11 +5,13 @@ import 'package:resecue_paws/screens/lost_pets_screen.dart';
 import 'package:resecue_paws/screens/pet_card.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../models/Post_factory.dart';
 import 'add_pet_post_screen.dart';
 import 'home_screen.dart';
 
 class FoundPetsScreen extends StatefulWidget {
-  const FoundPetsScreen({super.key});
+  final PostFactory postFactory;
+  const FoundPetsScreen({super.key, required this.postFactory});
 
   @override
   State<FoundPetsScreen> createState() => _FoundPetsScreenState();
@@ -43,7 +45,7 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
     // Check if the image is not null before adding it to the database
     String imagePath = formData['imagePath'] ?? '';
 
-    await addLostPet(
+    addLostPet(
       petType,
       breed,
       color,
@@ -67,7 +69,7 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
                     addLostPet: _addNewLostPetToDatabase, formType: "found")));
   }
 
-  Future<void> addLostPet(String petType,
+  void addLostPet(String petType,
       String breed,
       String color,
       String age,
@@ -78,22 +80,8 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
       String contactPhone,
       GeoPoint location,
       String imagePath) {
-    DateTime newDate = DateTime.now();
+    Post post = widget.postFactory.createFoundPet(petType: petType, breed: breed, color: color, age: age, gender: gender, collar: collar, foundPlace: foundPlace, personName: personName, contactPhone: contactPhone, location: location, imagePath: imagePath);
 
-    return FirebaseFirestore.instance.collection('foundPets').add({
-      'petType': petType,
-      'breed': breed,
-      'color': color,
-      'age': age,
-      'gender': gender,
-      'collar': collar,
-      'foundPlace': foundPlace,
-      'personName': personName,
-      'contactPhone': contactPhone,
-      'date': newDate,
-      'location': location,
-      'imagePath': imagePath, // Save the image path to Firestore
-    });
   }
 
   void _launchGoogleMaps(GeoPoint location) async {
@@ -144,7 +132,7 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => LostPetsScreen()),
+                                builder: (context) => LostPetsScreen(postFactory: Post.defaultPost(),)),
                           );
                           break;
                       }
