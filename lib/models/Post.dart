@@ -10,7 +10,7 @@ class Post {
   bool collar;
   String foundPlace;
   GeoPoint location;
-  //image
+  String imagePath;
   String personName;
   String contactPhone;
   DateTime date;
@@ -28,6 +28,7 @@ class Post {
     required this.contactPhone,
     required this.date,
     required this.location,
+    required this.imagePath,
   });
 
   // Add a named constructor for creating an Exam from a Map
@@ -51,6 +52,7 @@ class Post {
         contactPhone: 'Default pet contactPhone',
         date: DateTime.now(),
         location: GeoPoint(0.0, 0.0),
+        imagePath: "Default image path"
       );
     }
 
@@ -66,6 +68,7 @@ class Post {
       contactPhone: map['contactPhone'] as String,
       date: (map['date'] as Timestamp).toDate(),
       location: map['location'] as GeoPoint,
+      imagePath: map['imagePath'] as String,
     );
   }
 
@@ -82,6 +85,7 @@ class Post {
       'contactPhone': contactPhone,
       'date': date,
       'location': location,
+      'imagePath' : imagePath,
     };
   }
 }

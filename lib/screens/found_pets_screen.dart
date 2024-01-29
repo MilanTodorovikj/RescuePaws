@@ -36,21 +36,26 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
       String gender,
       bool collar,
       String foundPlace,
-      //image
       String personName,
       String contactPhone,
-      GeoPoint location) async {
-    addLostPet(
-        petType,
-        breed,
-        color,
-        age,
-        gender,
-        collar,
-        foundPlace,
-        personName,
-        contactPhone,
-        location);
+      GeoPoint location,
+      Map<String, dynamic> formData) async {
+    // Check if the image is not null before adding it to the database
+    String imagePath = formData['imagePath'] ?? '';
+
+    await addLostPet(
+      petType,
+      breed,
+      color,
+      age,
+      gender,
+      collar,
+      foundPlace,
+      personName,
+      contactPhone,
+      location,
+      imagePath, // Pass the image path to the addLostPet method
+    );
   }
 
   void _addLostPet() {
@@ -69,11 +74,10 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
       String gender,
       bool collar,
       String foundPlace,
-
-      //image
       String personName,
       String contactPhone,
-      GeoPoint location) {
+      GeoPoint location,
+      String imagePath) {
     DateTime newDate = DateTime.now();
 
     return FirebaseFirestore.instance.collection('foundPets').add({
@@ -87,7 +91,8 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
       'personName': personName,
       'contactPhone': contactPhone,
       'date': newDate,
-      'location': location
+      'location': location,
+      'imagePath': imagePath, // Save the image path to Firestore
     });
   }
 
@@ -216,7 +221,7 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
                           hasCollar: items[index].collar,
                           foundBy: items[index].personName,
                           contact: items[index].contactPhone,
-                          imageUrl: "https://cdn.buttercms.com/BOMpsWzRDe6yEE5XtIHA",
+                          imageUrl: items[index].imagePath,
                           onLocationPressed: () {_launchGoogleMaps(items[index].location);},
                         ),
                       ),
