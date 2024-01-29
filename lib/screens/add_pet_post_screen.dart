@@ -1,7 +1,12 @@
+import 'dart:io';
+
+import 'package:camera/camera.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'camera_screen.dart';
 import 'map_screen.dart';
 
 class NewLostPet extends StatefulWidget {
@@ -26,12 +31,26 @@ class _NewLostPetState extends State<NewLostPet> {
   String _selectedGender = "";
   String _selectedAge = "";
   bool _collar = true;
+  var firstCamera;
+  var image;
+  var image_url;
 
   @override
   void initState() {
     super.initState();
+
+    this.initCameras();
+
     // Initialize the selected location to a default value or null
     _selectedLocation = GeoPoint(37.7749, -122.4194); // Default: San Francisco
+  }
+
+  Future<void> initCameras() async {
+    // Obtain a list of the available cameras on the device.
+    final cameras = await availableCameras();
+
+// Get a specific camera from the list of available cameras.
+    firstCamera = cameras.first;
   }
 
   void _selectLocation() async {
@@ -87,6 +106,13 @@ class _NewLostPetState extends State<NewLostPet> {
     final personName = _personNameController.text;
     final contactPhone = _contactPhoneController.text;
 
+    // Combine the image information with other form data
+    // For example, you can include the image path or URL in the Firebase data
+    Map<String, dynamic> formData = {
+      // ... existing form data ...
+      'imagePath': image_url, // Replace with the appropriate image information
+    };
+
     if (petType.isEmpty ||
         breed.isEmpty ||
         color.isEmpty ||
@@ -110,9 +136,51 @@ class _NewLostPetState extends State<NewLostPet> {
       personName,
       contactPhone,
       _selectedLocation!,
+      formData,
     );
 
     Navigator.of(context).pop();
+  }
+
+  void _openCamera() async {
+    try {
+      final imageFile = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => TakePictureScreen(camera: firstCamera),
+        ),
+      );
+
+      // Handle the captured image (save it to Firebase Storage or perform any other actions)
+      if (imageFile != null) {
+        await _uploadImageToStorage(imageFile);
+      }
+    } catch (e) {
+      print("Error opening camera: $e");
+    }
+  }
+
+  Future<void> _uploadImageToStorage(XFile imageFile) async {
+    try {
+      String imageName = DateTime.now().millisecondsSinceEpoch.toString();
+      Reference storageReference =
+      FirebaseStorage.instance.ref().child('images/$imageName.jpg');
+
+      File file = File(imageFile.path);
+      await storageReference.putFile(file);
+      String imageUrl = await storageReference.getDownloadURL();
+
+      // Now you have the imageUrl, you can use it as needed (e.g., save it to Firestore)
+      print("Image uploaded to Firebase Storage: $imageUrl");
+      image_url = imageUrl;
+
+      // You can set the 'imagePath' variable to imageUrl when calling _submitData
+      setState(() {
+        image = Image.network(imageUrl);
+      });
+    } catch (e) {
+      print("Error uploading image to Firebase Storage: $e");
+    }
   }
 
   @override
@@ -312,8 +380,23 @@ class _NewLostPetState extends State<NewLostPet> {
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
+                    ElevatedButton(
+                      onPressed: _openCamera,
+                      style: ElevatedButton.styleFrom(
+                        primary: Theme.of(context).primaryColor,
+                        onPrimary: Colors.white,
+                        fixedSize: const Size.fromWidth(500),
+                      ),
+                      child: const Text(
+                        'Open Camera',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
                     ElevatedButton( // samo za izgled
-                      onPressed: _submitData,
+                      onPressed: () {
+                        // Combine the image information with other form data and submit to Firebase
+                        _submitData();
+                      },
                       child: Text('Submit'),
                     ),
                   ]),

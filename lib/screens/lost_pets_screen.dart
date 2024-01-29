@@ -140,10 +140,10 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
       String gender,
       bool collar,
       String foundPlace,
-      //image
       String personName,
       String contactPhone,
-      GeoPoint location) async {
+      GeoPoint location,
+      Map<String, dynamic> formData) async {
     // String topic = 'lost_pets';
     //
     // FirebaseMessaging.instance.subscribeToTopic(topic);
@@ -175,6 +175,8 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
     //   print("Error getting device state: $e");
     // }
 
+    String imagePath = formData['imagePath'] ?? '';
+
     addLostPet(
         petType,
         breed,
@@ -185,7 +187,9 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
         foundPlace,
         personName,
         contactPhone,
-        location);
+        location,
+        imagePath,
+    );
   }
 
   void _addLostPet() {
@@ -204,11 +208,10 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
       String gender,
       bool collar,
       String foundPlace,
-
-      //image
       String personName,
       String contactPhone,
-      GeoPoint location) {
+      GeoPoint location,
+      String imagePath) {
 
     DateTime newDate = DateTime.now();
 
@@ -223,7 +226,8 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
       'personName': personName,
       'contactPhone': contactPhone,
       'date': newDate,
-      'location': location
+      'location': location,
+      'imagePath': imagePath,
     });
   }
 
@@ -352,7 +356,7 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
                           hasCollar: items[index].collar,
                           foundBy: items[index].personName,
                           contact: items[index].contactPhone,
-                          imageUrl: "https://www.akc.org/wp-content/uploads/2017/11/Pomeranian-On-White-01.jpg",
+                          imageUrl: items[index].imagePath,
                           onLocationPressed: () {_launchGoogleMaps(items[index].location);},
                         ),
                       ),
