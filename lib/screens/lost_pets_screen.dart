@@ -2,9 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:resecue_paws/models/Post.dart';
+import 'package:resecue_paws/screens/found_pets_screen.dart';
+import 'package:resecue_paws/screens/pet_card.dart';
 
 import 'add_pet_post_screen.dart';
-
+import 'home_screen.dart';
 
 class LostPetsScreen extends StatefulWidget {
   const LostPetsScreen({super.key});
@@ -14,9 +16,10 @@ class LostPetsScreen extends StatefulWidget {
 }
 
 class _LostPetsScreenState extends State<LostPetsScreen> {
-  final CollectionReference _itemsCollection = FirebaseFirestore.instance
-      .collection('lostPets');
+  final CollectionReference _itemsCollection =
+  FirebaseFirestore.instance.collection('lostPets');
   List<Post> _lostPets = [];
+
   // static final FlutterLocalNotificationsPlugin _notificationsPlugin = FlutterLocalNotificationsPlugin();
   String? _deviceToken;
 
@@ -93,14 +96,11 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
     //     display(message);
     //   }
     // });
-
   }
 
   // Future<void> requestPermission() async {
   //   await OneSignal.shared.promptUserForPushNotificationPermission();
   // }
-
-
 
   // static Future<void> display(RemoteMessage message) async {
   //   // To display the notification in device
@@ -132,17 +132,16 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
   //   }
   // }
 
-
   void _addNewLostPetToDatabase(String petType,
-  String breed,
-  String color,
-  String age,
-  String gender,
-  bool collar,
-  String foundPlace,
-  //image
-  String personName,
-  String contactPhone,
+      String breed,
+      String color,
+      String age,
+      String gender,
+      bool collar,
+      String foundPlace,
+      //image
+      String personName,
+      String contactPhone,
       GeoPoint location) async {
     // String topic = 'lost_pets';
     //
@@ -175,16 +174,27 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
     //   print("Error getting device state: $e");
     // }
 
-    addLostPet(petType, breed, color, age, gender, collar, foundPlace, personName, contactPhone, location);
+    addLostPet(
+        petType,
+        breed,
+        color,
+        age,
+        gender,
+        collar,
+        foundPlace,
+        personName,
+        contactPhone,
+        location);
   }
 
   void _addLostPet() {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => NewLostPet(addLostPet: _addNewLostPetToDatabase,formType: "lost")));
+            builder: (context) =>
+                NewLostPet(
+                    addLostPet: _addNewLostPetToDatabase, formType: "lost")));
   }
-
 
   Future<void> addLostPet(String petType,
       String breed,
@@ -250,7 +260,6 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
   //   }
   // }
 
-
   // void _goToCalendar() {
   //   print("calendar button pressed");
   //   Navigator.push(
@@ -311,7 +320,6 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
   //
   // }
 
-
   // void _launchGoogleMaps(GeoPoint location) async {
   //   final lat = location.latitude;
   //   final long = location.longitude;
@@ -324,120 +332,131 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
   //   }
   // }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Rescue Paws"),
-          backgroundColor: Theme
-              .of(context)
-              .colorScheme
-              .inversePrimary,
-          actions: [
-            ElevatedButton(
-              onPressed: () => _addLostPet(),
-              style: const ButtonStyle(
-                  backgroundColor:
-                  MaterialStatePropertyAll<Color>(Colors.limeAccent)),
-              child: const Text(
-                "Add lost pet",
-                style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+      appBar: null,
+      body: Column(
+        children: [
+          const SizedBox(height: 40.0),
+          Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  PopupMenuButton<int>(
+                    itemBuilder: (context) =>
+                    [
+                      const PopupMenuItem(
+                        value: 1,
+                        child: Text('Home'),
+                      ),
+                      const PopupMenuItem(
+                        value: 2,
+                        child: Text('Found pets'),
+                      ),
+                    ],
+                    onSelected: (value) {
+                      switch (value) {
+                        case 1:
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => Home()),
+                          );
+                          break;
+                        case 2:
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => FoundPetsScreen()),
+                          );
+                          break;
+                      }
+                    },
+                    offset: Offset(-100, 0),
+                  ),
+                  const Text(
+                    'Lost pets',
+                    style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      fontStyle: FontStyle.italic,
+                      color: Color.fromRGBO(27, 53, 86, 1.0),
+                    ),
+                  ),
+                  Image.asset(
+                    "lib/images/logo.png",
+                    height: 50,
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
-        body: StreamBuilder<QuerySnapshot>(
-            stream: _itemsCollection.snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator();
-              }
-
-              if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              }
-
-              // If the data is ready, convert it to a list of MyItem
-              List<Post> items = snapshot.data!.docs.map((DocumentSnapshot doc) {
-                return Post.fromMap(doc.data() as Map<String, dynamic>);
-              }).toList();
-
-              // Now you have a list of items, you can use it as needed
-              return GridView.builder(
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                      // onTap: () {
-                      //   _launchGoogleMaps(items[index].location);
-                      // },
-                      child: Card(
-                        child: Stack(
-                          children: [
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                // Display Exam details
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      items[index].petType,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 30,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      DateFormat('yyyy-MM-dd HH:mm').format(items[index].date),
-                                      style: const TextStyle(fontSize: 20, color: Colors.grey),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            // Positioned(
-                            //   top: 5.0, // Adjust the top position according to your preference
-                            //   right: 5.0, // Adjust the right position according to your preference
-                            //   child: IconButton(
-                            //     icon: Icon(Icons.delete_forever_rounded),
-                            //     onPressed: () {
-                            //       _deleteExam(items[index].subject, items[index].date);
-                            //     },
-                            //     color: Colors.red,
-                            //   ),
-                            // ),
-                          ],
-                        ),
-                      )
-                  );
-                },
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
+              Image.asset(
+                "lib/images/2dogs1cat.jpg",
+                height: 110,
+                width: 400,
+                fit: BoxFit.fitWidth,
+              ),
+              ElevatedButton(
+                onPressed: () => _addLostPet(),
+                child: Text('Add pet'),
+                style: ElevatedButton.styleFrom(
+                  primary: const Color.fromRGBO(27, 53, 86, 1.0),
+                  elevation: 4,
+                  textStyle: const TextStyle(fontSize: 15),
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 2),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
-              );
-            }),
-        // floatingActionButton: Row(
-        //   mainAxisAlignment: MainAxisAlignment.end,
-        //   children: [
-        //     ElevatedButton(
-        //         onPressed: _goToCalendar,
-        //         style: const ButtonStyle(
-        //           backgroundColor:
-        //           MaterialStatePropertyAll<Color>(Colors.limeAccent),
-        //         ),
-        //         child: const Row(
-        //           children: [Text("View calendar",
-        //             style: TextStyle(color: Colors.red),),
-        //             Icon(Icons.calendar_today, color: Colors.red,)],
-        //         ))
-        //   ],
-        // )
+              ),
+            ],
+          ),
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: _itemsCollection.snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                }
+                if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                }
+                List<Post> items = snapshot.data!.docs.map((
+                    DocumentSnapshot doc) {
+                  return Post.fromMap(doc.data() as Map<String, dynamic>);
+                }).toList();
+                return ListView.builder(
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () {},
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        // width: MediaQuery
+                        //     .of(context)
+                        //     .size
+                        //     .width * 0.6,
+                        child: PetCard(
+                          petType: items[index].petType,
+                          breed: items[index].breed,
+                          color: items[index].color,
+                          age: items[index].age,
+                          gender: items[index].gender,
+                          hasCollar: items[index].collar,
+                          foundBy: items[index].foundPlace,
+                          contact: items[index].contactPhone,
+                          imageUrl: "https://www.akc.org/wp-content/uploads/2017/11/Pomeranian-On-White-01.jpg",
+                          onLocationPressed: () {},
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
