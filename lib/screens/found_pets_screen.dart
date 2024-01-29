@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:resecue_paws/models/Post.dart';
 import 'package:resecue_paws/screens/lost_pets_screen.dart';
 import 'package:resecue_paws/screens/pet_card.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'add_pet_post_screen.dart';
 import 'home_screen.dart';
@@ -89,6 +89,18 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
       'date': newDate,
       'location': location
     });
+  }
+
+  void _launchGoogleMaps(GeoPoint location) async {
+    final lat = location.latitude;
+    final long = location.longitude;
+    final url = 'https://www.google.com/maps/search/?api=1&query=$lat,$long';
+
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      print('Could not launch $url');
+    }
   }
 
   @override
@@ -202,10 +214,10 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
                           age: items[index].age,
                           gender: items[index].gender,
                           hasCollar: items[index].collar,
-                          foundBy: items[index].foundPlace,
+                          foundBy: items[index].personName,
                           contact: items[index].contactPhone,
                           imageUrl: "https://cdn.buttercms.com/BOMpsWzRDe6yEE5XtIHA",
-                          onLocationPressed: () {},
+                          onLocationPressed: () {_launchGoogleMaps(items[index].location);},
                         ),
                       ),
                     );

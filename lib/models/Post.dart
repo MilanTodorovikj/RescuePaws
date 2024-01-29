@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-// import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Post {
   String petType;
@@ -10,7 +9,7 @@ class Post {
   String gender;
   bool collar;
   String foundPlace;
-  // GeoPoint location;
+  GeoPoint location;
   //image
   String personName;
   String contactPhone;
@@ -28,7 +27,7 @@ class Post {
     required this.personName,
     required this.contactPhone,
     required this.date,
-    // required this.location,
+    required this.location,
   });
 
   // Add a named constructor for creating an Exam from a Map
@@ -39,7 +38,7 @@ class Post {
         // ||
         // map['location'] == null
     ) {
-      // Handle null values or missing keys, return a default Exam object or throw an error
+      // Handle null values or missing keys, return a default Post object or throw an error
       return Post(
         petType: 'Default pet type',
         breed: 'Default pet breed',
@@ -51,7 +50,7 @@ class Post {
         personName: 'Default pet personName',
         contactPhone: 'Default pet contactPhone',
         date: DateTime.now(),
-        // location: GeoPoint(0.0, 0.0),
+        location: GeoPoint(0.0, 0.0),
       );
     }
 
@@ -66,11 +65,10 @@ class Post {
       personName: map['personName'] as String,
       contactPhone: map['contactPhone'] as String,
       date: (map['date'] as Timestamp).toDate(),
-      // location: map['location'] as GeoPoint,
+      location: map['location'] as GeoPoint,
     );
   }
 
-  // Convert Exam object to a Map
   Map<String, dynamic> toMap() {
     return {
       'petType': petType,
@@ -83,7 +81,7 @@ class Post {
       'personName': personName,
       'contactPhone': contactPhone,
       'date': date,
-      // 'location': location,
+      'location': location,
     };
   }
 }
