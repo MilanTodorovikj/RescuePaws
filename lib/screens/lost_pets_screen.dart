@@ -6,11 +6,13 @@ import 'package:resecue_paws/screens/found_pets_screen.dart';
 import 'package:resecue_paws/screens/pet_card.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../models/Post_factory.dart';
 import 'add_pet_post_screen.dart';
 import 'home_screen.dart';
 
 class LostPetsScreen extends StatefulWidget {
-  const LostPetsScreen({super.key});
+  final PostFactory postFactory;
+  const LostPetsScreen({super.key, required this.postFactory});
 
   @override
   State<LostPetsScreen> createState() => _LostPetsScreenState();
@@ -201,7 +203,7 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
                     addLostPet: _addNewLostPetToDatabase, formType: "lost")));
   }
 
-  Future<void> addLostPet(String petType,
+  void addLostPet(String petType,
       String breed,
       String color,
       String age,
@@ -213,22 +215,7 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
       GeoPoint location,
       String imagePath) {
 
-    DateTime newDate = DateTime.now();
-
-    return FirebaseFirestore.instance.collection('lostPets').add({
-      'petType': petType,
-      'breed': breed,
-      'color': color,
-      'age': age,
-      'gender': gender,
-      'collar': collar,
-      'foundPlace': foundPlace,
-      'personName': personName,
-      'contactPhone': contactPhone,
-      'date': newDate,
-      'location': location,
-      'imagePath': imagePath,
-    });
+    Post post = widget.postFactory.createLostPet(petType: petType, breed: breed, color: color, age: age, gender: gender, collar: collar, foundPlace: foundPlace, personName: personName, contactPhone: contactPhone, location: location, imagePath: imagePath);
   }
 
   void _launchGoogleMaps(GeoPoint location) async {
@@ -279,7 +266,7 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => FoundPetsScreen()),
+                                builder: (context) => FoundPetsScreen(postFactory: Post.defaultPost(),)),
                           );
                           break;
                       }
