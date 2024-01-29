@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:location/location.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -164,7 +163,7 @@ class _NewLostPetState extends State<NewLostPet> {
                         labelText: 'Breed',
                         hintText: '',
                       ),
-                      controller: _petTypeController,
+                      controller: _breedController,
                       onSubmitted: (_) => _submitData(),
                     ),
                     TextField(
@@ -172,15 +171,7 @@ class _NewLostPetState extends State<NewLostPet> {
                         labelText: 'Color/Pattern',
                         hintText: '',
                       ),
-                      controller: _petTypeController,
-                      onSubmitted: (_) => _submitData(),
-                    ),
-                    TextField(
-                      decoration: const InputDecoration(
-                        labelText: 'Color/Pattern',
-                        hintText: '',
-                      ),
-                      controller: _petTypeController,
+                      controller: _colorController,
                       onSubmitted: (_) => _submitData(),
                     ),
                     Row(
@@ -287,18 +278,10 @@ class _NewLostPetState extends State<NewLostPet> {
                     ),
                     TextField(
                       decoration: const InputDecoration(
-                        labelText: 'Color/Pattern',
-                        hintText: '',
-                      ),
-                      controller: _petTypeController,
-                      onSubmitted: (_) => _submitData(),
-                    ),
-                    TextField(
-                      decoration: const InputDecoration(
                         labelText: 'Found place',
                         hintText: '',
                       ),
-                      controller: _petTypeController,
+                      controller: _foundPlaceController,
                       onSubmitted: (_) => _submitData(),
                     ),
                     TextField(
@@ -306,7 +289,7 @@ class _NewLostPetState extends State<NewLostPet> {
                         labelText: 'Person name',
                         hintText: '',
                       ),
-                      controller: _petTypeController,
+                      controller: _personNameController,
                       onSubmitted: (_) => _submitData(),
                     ),
                     TextField(
@@ -314,41 +297,25 @@ class _NewLostPetState extends State<NewLostPet> {
                         labelText: 'Contact phone',
                         hintText: '',
                       ),
-                      controller: _petTypeController,
+                      controller: _contactPhoneController,
                       onSubmitted: (_) => _submitData(),
                     ),
+                    ElevatedButton(
+                      onPressed: _selectLocation,
+                      style: ElevatedButton.styleFrom(
+                        primary: Theme.of(context).primaryColor,
+                        onPrimary: Colors.white,
+                        fixedSize: const Size.fromWidth(500),
+                      ),
+                      child: const Text(
+                        'Select Location',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
                     ElevatedButton( // samo za izgled
-                      onPressed: () {
-                        // Add functionality for the first button
-                      },
+                      onPressed: _submitData,
                       child: Text('Submit'),
                     ),
-
-
-                    // ElevatedButton(
-                    //   onPressed: _selectLocation,
-                    //   style: ElevatedButton.styleFrom(
-                    //     primary: Theme.of(context).primaryColor,
-                    //     onPrimary: Colors.white,
-                    //     fixedSize: const Size.fromWidth(500),
-                    //   ),
-                    //   child: const Text(
-                    //     'Select Location',
-                    //     style: TextStyle(fontWeight: FontWeight.bold),
-                    //   ),
-                    // ),
-                    // ElevatedButton(
-                    //   style: ElevatedButton.styleFrom(
-                    //     foregroundColor: Theme.of(context).textTheme.button?.color,
-                    //     backgroundColor: Theme.of(context).secondaryHeaderColor,
-                    //     fixedSize: const Size.fromWidth(500),
-                    //   ),
-                    //   onPressed: _submitData,
-                    //   child: Text(
-                    //     'Add '+ this.widget.formType + ' Pet',
-                    //     style: TextStyle(fontWeight: FontWeight.bold),
-                    //   ),
-                    // ),
                   ]),
             ),
             // ],

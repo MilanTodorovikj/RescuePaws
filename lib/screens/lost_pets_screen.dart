@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:resecue_paws/models/Post.dart';
 import 'package:resecue_paws/screens/found_pets_screen.dart';
 import 'package:resecue_paws/screens/pet_card.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'add_pet_post_screen.dart';
 import 'home_screen.dart';
@@ -208,16 +209,8 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
       String personName,
       String contactPhone,
       GeoPoint location) {
-    // User? user = FirebaseAuth.instance.currentUser;
+
     DateTime newDate = DateTime.now();
-    // if (user != null) {
-    //   return FirebaseFirestore.instance.collection('exams').add({
-    //     'subject': subject,
-    //     'date': newDate,
-    //     'location': location,
-    //     'userId': user.uid,
-    //   });
-    // }
 
     return FirebaseFirestore.instance.collection('lostPets').add({
       'petType': petType,
@@ -232,105 +225,19 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
       'date': newDate,
       'location': location
     });
-
-    // return FirebaseFirestore.instance.collection('lostPets').add({
-    //   'petType': 'petType',
-    //   'breed': 'breed',
-    //   'color': 'color',
-    //   'age': 'age',
-    //   'gender': 'gender',
-    //   'collar': true,
-    //   'foundPlace': 'foundPlace',
-    //   'personName': 'personName',
-    //   'contactPhone': 'contactPhone',
-    //   'date': DateTime.now(),
-    // });
   }
 
-  // Future<void> _signOutAndNavigateToLogin(BuildContext context) async {
-  //   try {
-  //     await FirebaseAuth.instance.signOut();
-  //     Navigator.of(context).pushAndRemoveUntil(
-  //       MaterialPageRoute(builder: (context) => AuthGate()),
-  //           (Route<dynamic> route) => false,
-  //     );
-  //   } catch (e) {
-  //     print('Error during sign out: $e');
-  //     // Handle the error
-  //   }
-  // }
+  void _launchGoogleMaps(GeoPoint location) async {
+    final lat = location.latitude;
+    final long = location.longitude;
+    final url = 'https://www.google.com/maps/search/?api=1&query=$lat,$long';
 
-  // void _goToCalendar() {
-  //   print("calendar button pressed");
-  //   Navigator.push(
-  //       context,
-  //       MaterialPageRoute(
-  //           builder: (context) =>
-  //               CalendarScreen()));
-  // }
-
-  // Future<void> _deleteExam(String subject, DateTime date) async {
-  //   User? user = FirebaseAuth.instance.currentUser;
-  //
-  //   if (user != null) {
-  //     // Find the document with matching subject, date, and userId
-  //     var query = _itemsCollection
-  //         .where('subject', isEqualTo: subject)
-  //         .where('date', isEqualTo: date)
-  //         .where('userId', isEqualTo: user.uid);
-  //
-  //     query.get().then((querySnapshot) {
-  //       querySnapshot.docs.forEach((doc) {
-  //         // Delete the document with the found ID
-  //         _itemsCollection.doc(doc.id).delete();
-  //       });
-  //     });
-  //   }
-  //
-  //   String topic = 'exams'; // Use a meaningful topic name
-  //
-  //   FirebaseMessaging.instance.subscribeToTopic(topic);
-  //
-  //   try {
-  //     var deviceState = await OneSignal.shared.getDeviceState();
-  //     String? playerId = deviceState?.userId;
-  //
-  //
-  //
-  //     if (playerId != null && playerId.isNotEmpty) {
-  //       print("playerId:"+playerId);
-  //       List<String> playerIds = [playerId];
-  //
-  //       try {
-  //         await OneSignal.shared.postNotification(OSCreateNotification(
-  //           playerIds: playerIds,
-  //           content: "You deleted an exam: $subject",
-  //           heading: "Exam deleted",
-  //         ));
-  //       } catch (e) {
-  //         print("Error posting notification: $e");
-  //       }
-  //     } else {
-  //       print("Player ID is null or empty.");
-  //     }
-  //   } catch (e) {
-  //     // Handle errors
-  //     print("Error getting device state: $e");
-  //   }
-  //
-  // }
-
-  // void _launchGoogleMaps(GeoPoint location) async {
-  //   final lat = location.latitude;
-  //   final long = location.longitude;
-  //   final url = 'https://www.google.com/maps/search/?api=1&query=$lat,$long';
-  //
-  //   if (await canLaunch(url)) {
-  //     await launch(url);
-  //   } else {
-  //     print('Could not launch $url');
-  //   }
-  // }
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      print('Could not launch $url');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -443,10 +350,10 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
                           age: items[index].age,
                           gender: items[index].gender,
                           hasCollar: items[index].collar,
-                          foundBy: items[index].foundPlace,
+                          foundBy: items[index].personName,
                           contact: items[index].contactPhone,
                           imageUrl: "https://www.akc.org/wp-content/uploads/2017/11/Pomeranian-On-White-01.jpg",
-                          onLocationPressed: () {},
+                          onLocationPressed: () {_launchGoogleMaps(items[index].location);},
                         ),
                       ),
                     );
