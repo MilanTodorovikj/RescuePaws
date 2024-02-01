@@ -97,6 +97,7 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
             playerIds: playerIds,
             content: "A new "+post.petType+" has been found.\nBreed: " + post.breed+", color/pattern: " +post.color+", gender: "+post.gender+" at: " +post.foundPlace,
             heading: "New Pet Found",
+            bigPicture: post.imagePath,
           ));
         } catch (e) {
           print("Error posting notification: $e");
