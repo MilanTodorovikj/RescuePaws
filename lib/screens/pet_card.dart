@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class PetCard extends StatelessWidget {
   final String petType;
@@ -91,7 +90,6 @@ class PetCard extends StatelessWidget {
                 ),
               ),
             ),
-            // Location button
             IconButton(
               icon: Icon(Icons.location_on, color: Color.fromRGBO(27, 53, 86, 1.0),),
               onPressed: onLocationPressed,

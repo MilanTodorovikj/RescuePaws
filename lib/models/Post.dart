@@ -50,15 +50,12 @@ class Post implements PostFactory{
     );
   }
 
-  // Add a named constructor for creating an Exam from a Map
+  // Named constructor for creating an Exam from a Map
   factory Post.fromMap(Map<String, dynamic>? map) {
     if (map == null ||
         map['petType'] == null ||
         map['date'] == null
-        // ||
-        // map['location'] == null
     ) {
-      // Handle null values or missing keys, return a default Post object or throw an error
       return Post.defaultPost();
     }
 
