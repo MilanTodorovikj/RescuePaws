@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:resecue_paws/models/Post.dart';
 import 'package:resecue_paws/screens/found_pets_screen.dart';
 import 'package:resecue_paws/screens/pet_card.dart';
@@ -23,117 +22,11 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
   FirebaseFirestore.instance.collection('lostPets');
   List<Post> _lostPets = [];
 
-  // static final FlutterLocalNotificationsPlugin _notificationsPlugin = FlutterLocalNotificationsPlugin();
-  String? _deviceToken;
-
-  // static void initialize() {
-  //   // Initialization  setting for android
-  //   const InitializationSettings initializationSettingsAndroid = InitializationSettings(
-  //     android: AndroidInitializationSettings('image'),
-  //   );
-  //   _notificationsPlugin.initialize(
-  //     initializationSettingsAndroid,
-  //     // to handle event when we receive notification
-  //     onDidReceiveNotificationResponse: (details) {
-  //       if (details.input != null) {}
-  //     },
-  //   );
-  // }
-
-  // Future<bool> _requestLocationService() async {
-  //   PermissionStatus status = await Permission.location.status;
-  //   if (status == PermissionStatus.denied) {
-  //     status = await Permission.location.request();
-  //     if (status != PermissionStatus.granted) {
-  //       // Handle the case where the user denied location permission
-  //       return false;
-  //     }
-  //   }
-  //
-  //   if (status == PermissionStatus.granted) {
-  //     return true;
-  //   }
-  //
-  //   return false;
-  // }
-
-  // Future<void> _requestNotificationPermission() async {
-  //   PermissionStatus status = await Permission.notification.request();
-  //   if (status.isGranted) {
-  //     print("Notification permission granted");
-  //   } else if (status.isDenied) {
-  //     print("Notification permission denied");
-  //   } else if (status.isPermanentlyDenied) {
-  //     print("Notification permission permanently denied");
-  //     // You might want to open the app settings in this case
-  //     openAppSettings();
-  //   }
-  // }
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    // initialize();
-    // _requestNotificationPermission();
-    // _requestLocationService();
-    //
-    //
-    // OneSignal.shared.setAppId("657ac24e-e486-475b-85ab-925e4654ddfc");
-    //
-    // OneSignal.shared.setNotificationOpenedHandler((OSNotificationOpenedResult result) {
-    //   // Handle notification open
-    // });
-    //
-    // FirebaseMessaging.instance.getToken().then((token) {
-    //   _deviceToken = token;
-    // });
-    //
-    // // To initialise when app is not terminated
-    // FirebaseMessaging.instance.getInitialMessage().then((message) {
-    //   // Handle initial message
-    // });
-    //
-    // FirebaseMessaging.onMessage.listen((message) {
-    //   if (message.notification != null) {
-    //     display(message);
-    //   }
-    // });
   }
-
-  // Future<void> requestPermission() async {
-  //   await OneSignal.shared.promptUserForPushNotificationPermission();
-  // }
-
-  // static Future<void> display(RemoteMessage message) async {
-  //   // To display the notification in device
-  //   try {
-  //     print(message.notification!.android!.sound);
-  //     final id = DateTime
-  //         .now()
-  //         .millisecondsSinceEpoch ~/ 1000;
-  //     NotificationDetails notificationDetails = NotificationDetails(
-  //       android: AndroidNotificationDetails(
-  //           message.notification!.android!.sound ?? "Channel Id",
-  //           message.notification!.android!.sound ?? "Main Channel",
-  //           groupKey: "gfg",
-  //           color: Colors.green,
-  //           importance: Importance.max,
-  //           sound: RawResourceAndroidNotificationSound(
-  //               message.notification!.android!.sound ?? "gfg"),
-  //
-  //           // different sound for
-  //           // different notification
-  //           playSound: true,
-  //           priority: Priority.high),
-  //     );
-  //     await _notificationsPlugin.show(id, message.notification?.title,
-  //         message.notification?.body, notificationDetails,
-  //         payload: message.data['route']);
-  //   } catch (e) {
-  //     debugPrint(e.toString());
-  //   }
-  // }
 
   void _addNewLostPetToDatabase(String petType,
       String breed,
@@ -146,36 +39,6 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
       String contactPhone,
       GeoPoint location,
       Map<String, dynamic> formData) async {
-    // String topic = 'lost_pets';
-    //
-    // FirebaseMessaging.instance.subscribeToTopic(topic);
-    //
-    // try {
-    //   var deviceState = await OneSignal.shared.getDeviceState();
-    //   String? playerId = deviceState?.userId;
-    //
-    //
-    //
-    //   if (playerId != null && playerId.isNotEmpty) {
-    //     print("playerId:"+playerId);
-    //     List<String> playerIds = [playerId];
-    //
-    //     try {
-    //       await OneSignal.shared.postNotification(OSCreateNotification(
-    //         playerIds: playerIds,
-    //         content: "You have a new exam: $subject",
-    //         heading: "New Exam Added",
-    //       ));
-    //     } catch (e) {
-    //       print("Error posting notification: $e");
-    //     }
-    //   } else {
-    //     print("Player ID is null or empty.");
-    //   }
-    // } catch (e) {
-    //   // Handle errors
-    //   print("Error getting device state: $e");
-    // }
 
     String imagePath = formData['imagePath'] ?? '';
 
@@ -330,10 +193,6 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
                       onTap: () {},
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 15),
-                        // width: MediaQuery
-                        //     .of(context)
-                        //     .size
-                        //     .width * 0.6,
                         child: PetCard(
                           petType: items[index].petType,
                           breed: items[index].breed,

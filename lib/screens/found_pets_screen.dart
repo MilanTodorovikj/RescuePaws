@@ -23,9 +23,6 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
   FirebaseFirestore.instance.collection('foundPets');
   List<Post> _foundPets = [];
 
-  // static final FlutterLocalNotificationsPlugin _notificationsPlugin = FlutterLocalNotificationsPlugin();
-  String? _deviceToken;
-
   @override
   void initState() {
     super.initState();
@@ -106,7 +103,6 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
         print("Player ID is null or empty.");
       }
     } catch (e) {
-      // Handle errors
       print("Error getting device state: $e");
     }
 
@@ -225,10 +221,6 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
                       onTap: () {},
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 15),
-                        // width: MediaQuery
-                        //     .of(context)
-                        //     .size
-                        //     .width * 0.6,
                         child: PetCard(
                           petType: items[index].petType,
                           breed: items[index].breed,

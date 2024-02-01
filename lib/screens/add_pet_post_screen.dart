@@ -49,7 +49,7 @@ class _NewLostPetState extends State<NewLostPet> {
     // Obtain a list of the available cameras on the device.
     final cameras = await availableCameras();
 
-// Get a specific camera from the list of available cameras.
+    // Get the main camera from the list of available cameras.
     firstCamera = cameras.first;
   }
 
@@ -106,11 +106,8 @@ class _NewLostPetState extends State<NewLostPet> {
     final personName = _personNameController.text;
     final contactPhone = _contactPhoneController.text;
 
-    // Combine the image information with other form data
-    // For example, you can include the image path or URL in the Firebase data
     Map<String, dynamic> formData = {
-      // ... existing form data ...
-      'imagePath': image_url, // Replace with the appropriate image information
+      'imagePath': image_url,
     };
 
     if (petType.isEmpty ||
@@ -170,11 +167,9 @@ class _NewLostPetState extends State<NewLostPet> {
       await storageReference.putFile(file);
       String imageUrl = await storageReference.getDownloadURL();
 
-      // Now you have the imageUrl, you can use it as needed (e.g., save it to Firestore)
       print("Image uploaded to Firebase Storage: $imageUrl");
       image_url = imageUrl;
 
-      // You can set the 'imagePath' variable to imageUrl when calling _submitData
       setState(() {
         image = Image.network(imageUrl);
       });
@@ -207,7 +202,6 @@ class _NewLostPetState extends State<NewLostPet> {
               ),
             ]),
         ),
-        //AppBar(title: const Text('Add '+ this.widget.formType + ' Pet',)),
         body: SingleChildScrollView(
           child: Card(
             elevation: 5,
@@ -218,10 +212,8 @@ class _NewLostPetState extends State<NewLostPet> {
                   children: <Widget>[
                     TextField(
                       decoration: const InputDecoration(
-                        // suffixIcon: Icon(Icons.clear),
                         labelText: 'Pet type',
                         hintText: '',
-                        // filled: true,
                       ),
                       controller: _petTypeController,
                       onSubmitted: (_) => _submitData(),
@@ -394,14 +386,12 @@ class _NewLostPetState extends State<NewLostPet> {
                     ),
                     ElevatedButton( // samo za izgled
                       onPressed: () {
-                        // Combine the image information with other form data and submit to Firebase
                         _submitData();
                       },
                       child: Text('Submit'),
                     ),
                   ]),
             ),
-            // ],
           ),
         ),
       ),
