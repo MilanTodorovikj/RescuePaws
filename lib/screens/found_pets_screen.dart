@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:resecue_paws/models/Post.dart';
 import 'package:resecue_paws/screens/lost_pets_screen.dart';
 import 'package:resecue_paws/screens/pet_card.dart';
@@ -27,7 +28,6 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -69,7 +69,7 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
                     addLostPet: _addNewLostPetToDatabase, formType: "found")));
   }
 
-  void addLostPet(String petType,
+  Future<void> addLostPet(String petType,
       String breed,
       String color,
       String age,
@@ -79,8 +79,36 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
       String personName,
       String contactPhone,
       GeoPoint location,
-      String imagePath) {
+      String imagePath) async {
     Post post = widget.postFactory.createFoundPet(petType: petType, breed: breed, color: color, age: age, gender: gender, collar: collar, foundPlace: foundPlace, personName: personName, contactPhone: contactPhone, location: location, imagePath: imagePath);
+
+    try {
+      var deviceState = await OneSignal.shared.getDeviceState();
+      String? playerId = deviceState?.userId;
+
+
+
+      if (playerId != null && playerId.isNotEmpty) {
+        print("playerId:"+playerId);
+        List<String> playerIds = [playerId];
+
+        try {
+          await OneSignal.shared.postNotification(OSCreateNotification(
+            playerIds: playerIds,
+            content: "A new "+post.petType+" has been found.\nBreed: " + post.breed+", color/pattern: " +post.color+", gender: "+post.gender+" at: " +post.foundPlace,
+            heading: "New Pet Found",
+          ));
+        } catch (e) {
+          print("Error posting notification: $e");
+        }
+      } else {
+        print("Player ID is null or empty.");
+      }
+    } catch (e) {
+      // Handle errors
+      print("Error getting device state: $e");
+    }
+
 
   }
 
