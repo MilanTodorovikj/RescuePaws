@@ -161,7 +161,7 @@ class _NewLostPetState extends State<NewLostPet> {
     try {
       String imageName = DateTime.now().millisecondsSinceEpoch.toString();
       Reference storageReference =
-      FirebaseStorage.instance.ref().child('images/$imageName.jpg');
+          FirebaseStorage.instance.ref().child('images/$imageName.jpg');
 
       File file = File(imageFile.path);
       await storageReference.putFile(file);
@@ -183,24 +183,32 @@ class _NewLostPetState extends State<NewLostPet> {
     return MaterialApp(
       theme: ThemeData(
           colorSchemeSeed: const Color.fromRGBO(27, 53, 86, 1.0),
+          scaffoldBackgroundColor: Colors.white,
           useMaterial3: true),
       home: Scaffold(
         appBar: AppBar(
-            title: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              const Text(
-                'Add pet ',
-                style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                  fontStyle: FontStyle.italic,
-                  color: Color.fromRGBO(27, 53, 86, 1.0),
-                ),
+          title:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            const Text(
+              'Add pet ',
+              style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+                fontStyle: FontStyle.italic,
+                color: Color.fromRGBO(27, 53, 86, 1.0),
               ),
-              Image.asset(
-                "lib/images/logo.png",
-                height: 50,
-              ),
-            ]),
+            ),
+            Image.asset(
+              "lib/images/logo.png",
+              height: 50,
+            ),
+          ]),
         ),
         body: SingleChildScrollView(
           child: Card(
@@ -210,186 +218,319 @@ class _NewLostPetState extends State<NewLostPet> {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    TextField(
-                      decoration: const InputDecoration(
-                        labelText: 'Pet type',
-                        hintText: '',
-                      ),
-                      controller: _petTypeController,
-                      onSubmitted: (_) => _submitData(),
-                    ),
-                    TextField(
-                      decoration: const InputDecoration(
-                        labelText: 'Breed',
-                        hintText: '',
-                      ),
-                      controller: _breedController,
-                      onSubmitted: (_) => _submitData(),
-                    ),
-                    TextField(
-                      decoration: const InputDecoration(
-                        labelText: 'Color/Pattern',
-                        hintText: '',
-                      ),
-                      controller: _colorController,
-                      onSubmitted: (_) => _submitData(),
+                    Row(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(top: 10.0),
+                          child: const Text(
+                            'Pet type:',
+                            style: TextStyle(fontSize: 14),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        const SizedBox(width: 15),
+                        Expanded(
+                          child: TextField(
+                            decoration: const InputDecoration(
+                              hintText: '',
+                            ),
+                            controller: _petTypeController,
+                            onSubmitted: (_) => _submitData(),
+                          ),
+                        ),
+                      ],
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(top: 12.0),
+                          child: const Text(
+                            'Breed:',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ),
+                        const SizedBox(width: 15),
+                        Expanded(
+                            child: TextField(
+                          decoration: const InputDecoration(
+                            hintText: '',
+                          ),
+                          controller: _breedController,
+                          onSubmitted: (_) => _submitData(),
+                        ))
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(top: 15.0),
+                          child: const Text(
+                            'Color/Pattern:',
+                            style: TextStyle(fontSize: 14),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        const SizedBox(width: 15),
+                        Expanded(
+                            child: TextField(
+                          decoration: const InputDecoration(
+                            hintText: '',
+                          ),
+                          controller: _colorController,
+                          onSubmitted: (_) => _submitData(),
+                        ))
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
-                            const Text('Age:'),
-                            Radio(
-                              value: 'Young',
-                              groupValue: _selectedAge,
-                              onChanged: (value) {
-                                setState(() {
-                                  _selectedAge = value.toString();
-                                });
-                              },
+                            const SizedBox(
+                              width: 70,
+                              child: Text('Age:'),
                             ),
-                            Text('Young'),
+                            SizedBox(
+                              width: 110,
+                              child: Row(
+                                children: [
+                                  Radio(
+                                    value: 'Young',
+                                    groupValue: _selectedAge,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _selectedAge = value.toString();
+                                      });
+                                    },
+                                  ),
+                                  const Text('Young'),
+                                ],
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Radio(
+                                  value: 'Mature',
+                                  groupValue: _selectedAge,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _selectedAge = value.toString();
+                                    });
+                                  },
+                                ),
+                                const Text('Mature'),
+                              ],
+                            ),
                           ],
                         ),
                         Row(
                           children: [
-                            Radio(
-                              value: 'Mature',
-                              groupValue: _selectedAge,
-                              onChanged: (value) {
-                                setState(() {
-                                  _selectedAge = value.toString();
-                                });
-                              },
+                            const SizedBox(
+                              width: 70,
+                              child: Text('Gender:'),
                             ),
-                            Text('Mature'),
+                            SizedBox(
+                              width: 110,
+                              child: Row(
+                                children: [
+                                  Radio(
+                                    value: 'Male',
+                                    groupValue: _selectedGender,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _selectedGender = value.toString();
+                                      });
+                                    },
+                                  ),
+                                  const Text('Male'),
+                                ],
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Radio(
+                                  value: 'Female',
+                                  groupValue: _selectedGender,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _selectedGender = value.toString();
+                                    });
+                                  },
+                                ),
+                                const Text('Female'),
+                              ],
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Container(
+                              width: 70,
+                              child: const Text('Collar:'),
+                            ),
+                            SizedBox(
+                              width: 110,
+                              child: Row(
+                                children: [
+                                  Radio(
+                                    value: true,
+                                    groupValue: _collar,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _collar = value!;
+                                      });
+                                    },
+                                  ),
+                                  const Text('Yes'),
+                                ],
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Radio(
+                                  value: false,
+                                  groupValue: _collar,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _collar = value!;
+                                    });
+                                  },
+                                ),
+                                const Text('No'),
+                              ],
+                            ),
                           ],
                         ),
                       ],
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Row(
-                          children: [
-                            const Text('Gender:'),
-                            Radio(
-                              value: 'Male',
-                              groupValue: _selectedGender,
-                              onChanged: (value) {
-                                setState(() {
-                                  _selectedGender = value.toString();
-                                });
-                              },
-                            ),
-                            Text('Male'),
-                          ],
+                        Container(
+                          margin: const EdgeInsets.only(top: 10.0),
+                          child: const Text(
+                            'Found place:',
+                            style: TextStyle(fontSize: 14),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
-                        Row(
-                          children: [
-                            Radio(
-                              value: 'Female',
-                              groupValue: _selectedGender,
-                              onChanged: (value) {
-                                setState(() {
-                                  _selectedGender = value.toString();
-                                });
-                              },
+                        const SizedBox(width: 15),
+                        Expanded(
+                          child: TextField(
+                            decoration: const InputDecoration(
+                              hintText: '',
                             ),
-                            Text('Female'),
-                          ],
+                            controller: _foundPlaceController,
+                            onSubmitted: (_) => _submitData(),
+                          ),
                         ),
                       ],
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Row(
-                          children: [
-                            const Text('Collar:'),
-                            Radio(
-                              value: true,
-                              groupValue: _collar,
-                              onChanged: (value) {
-                                setState(() {
-                                  _collar = value!;
-                                });
-                              },
-                            ),
-                            Text('Yes'),
-                          ],
+                        Container(
+                          margin: const EdgeInsets.only(top: 10.0),
+                          child: const Text(
+                            'Person name:',
+                            style: TextStyle(fontSize: 14),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
-                        Row(
-                          children: [
-                            Radio(
-                              value: false,
-                              groupValue: _collar,
-                              onChanged: (value) {
-                                setState(() {
-                                  _collar = value!;
-                                });
-                              },
+                        const SizedBox(width: 15),
+                        Expanded(
+                          child: TextField(
+                            decoration: const InputDecoration(
+                              hintText: '',
                             ),
-                            Text('No'),
-                          ],
+                            controller: _personNameController,
+                            onSubmitted: (_) => _submitData(),
+                          ),
                         ),
                       ],
                     ),
-                    TextField(
-                      decoration: const InputDecoration(
-                        labelText: 'Found place',
-                        hintText: '',
-                      ),
-                      controller: _foundPlaceController,
-                      onSubmitted: (_) => _submitData(),
+                    Row(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(top: 10.0),
+                          child: const Text(
+                            'Contact phone:',
+                            style: TextStyle(fontSize: 14),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        const SizedBox(width: 15),
+                        Expanded(
+                          child: TextField(
+                            decoration: const InputDecoration(
+                              hintText: '',
+                            ),
+                            controller: _contactPhoneController,
+                            onSubmitted: (_) => _submitData(),
+                          ),
+                        ),
+                      ],
                     ),
-                    TextField(
-                      decoration: const InputDecoration(
-                        labelText: 'Person name',
-                        hintText: '',
-                      ),
-                      controller: _personNameController,
-                      onSubmitted: (_) => _submitData(),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        const Text(
+                          'Location:',
+                          style: TextStyle(fontSize: 14),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(width: 15),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: _selectLocation,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Theme.of(context).primaryColor,
+                              foregroundColor: Colors.white,
+                              fixedSize: const Size.fromWidth(500),
+                            ),
+                            child: const Text(
+                              'Select Location',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    TextField(
-                      decoration: const InputDecoration(
-                        labelText: 'Contact phone',
-                        hintText: '',
-                      ),
-                      controller: _contactPhoneController,
-                      onSubmitted: (_) => _submitData(),
+                    Row(
+                      children: [
+                        const Text(
+                          'Last seen:',
+                          style: TextStyle(fontSize: 14),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(width: 15),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: _openCamera,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Theme.of(context).primaryColor,
+                              foregroundColor: Colors.white,
+                              fixedSize: const Size.fromWidth(500),
+                            ),
+                            child: const Text(
+                              'Open Camera',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    ElevatedButton(
-                      onPressed: _selectLocation,
-                      style: ElevatedButton.styleFrom(
-                        primary: Theme.of(context).primaryColor,
-                        onPrimary: Colors.white,
-                        fixedSize: const Size.fromWidth(500),
+                    Center(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(context).primaryColor,
+                          foregroundColor: Colors.white,
+                          fixedSize: const Size.fromWidth(300),
+                        ),
+                        onPressed: () {
+                          _submitData();
+                        },
+                        child: const Text('Submit'),
                       ),
-                      child: const Text(
-                        'Select Location',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: _openCamera,
-                      style: ElevatedButton.styleFrom(
-                        primary: Theme.of(context).primaryColor,
-                        onPrimary: Colors.white,
-                        fixedSize: const Size.fromWidth(500),
-                      ),
-                      child: const Text(
-                        'Open Camera',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    ElevatedButton( // samo za izgled
-                      onPressed: () {
-                        _submitData();
-                      },
-                      child: Text('Submit'),
-                    ),
+                    )
                   ]),
             ),
           ),
