@@ -218,10 +218,10 @@ class _NewLostPetState extends State<NewLostPet> {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
+                    const SizedBox(height: 15),
                     Row(
                       children: [
                         Container(
-                          margin: const EdgeInsets.only(top: 10.0),
                           child: const Text(
                             'Pet type:',
                             style: TextStyle(fontSize: 14),
@@ -230,20 +230,34 @@ class _NewLostPetState extends State<NewLostPet> {
                         ),
                         const SizedBox(width: 15),
                         Expanded(
-                          child: TextField(
-                            decoration: const InputDecoration(
-                              hintText: '',
+                          child: SizedBox(
+                            height: 30,
+                            child: TextField(
+                              decoration: InputDecoration(
+                                contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(40),
+                                  borderSide: BorderSide.none,
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(40),
+                                  borderSide: const BorderSide(color: Colors.blue),
+                                ),
+                                hintText: '',
+                                fillColor: Colors.green,
+                                filled: true,
+                              ),
+                              controller: _petTypeController,
+                              onSubmitted: (_) => _submitData(),
                             ),
-                            controller: _petTypeController,
-                            onSubmitted: (_) => _submitData(),
                           ),
                         ),
                       ],
                     ),
+                    const SizedBox(height: 15),
                     Row(
                       children: [
                         Container(
-                          margin: EdgeInsets.only(top: 12.0),
                           child: const Text(
                             'Breed:',
                             style: TextStyle(fontSize: 14),
@@ -251,19 +265,34 @@ class _NewLostPetState extends State<NewLostPet> {
                         ),
                         const SizedBox(width: 15),
                         Expanded(
+                          child: SizedBox(
+                            height: 30,
                             child: TextField(
-                          decoration: const InputDecoration(
-                            hintText: '',
+                              decoration: InputDecoration(
+                                contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(40),
+                                  borderSide: BorderSide.none,
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(40),
+                                  borderSide: const BorderSide(color: Colors.blue),
+                                ),
+                                hintText: '',
+                                fillColor: Colors.green,
+                                filled: true,
+                              ),
+                              controller: _breedController,
+                              onSubmitted: (_) => _submitData(),
+                            ),
                           ),
-                          controller: _breedController,
-                          onSubmitted: (_) => _submitData(),
-                        ))
+                        ),
                       ],
                     ),
+                    const SizedBox(height: 15),
                     Row(
                       children: [
                         Container(
-                          margin: const EdgeInsets.only(top: 15.0),
                           child: const Text(
                             'Color/Pattern:',
                             style: TextStyle(fontSize: 14),
@@ -272,13 +301,28 @@ class _NewLostPetState extends State<NewLostPet> {
                         ),
                         const SizedBox(width: 15),
                         Expanded(
+                          child: SizedBox(
+                            height: 30,
                             child: TextField(
-                          decoration: const InputDecoration(
-                            hintText: '',
+                              decoration: InputDecoration(
+                                contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(40),
+                                  borderSide: BorderSide.none,
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(40),
+                                  borderSide: const BorderSide(color: Colors.blue),
+                                ),
+                                hintText: '',
+                                fillColor: Colors.green,
+                                filled: true,
+                              ),
+                              controller: _colorController,
+                              onSubmitted: (_) => _submitData(),
+                            ),
                           ),
-                          controller: _colorController,
-                          onSubmitted: (_) => _submitData(),
-                        ))
+                        ),
                       ],
                     ),
                     Column(
@@ -297,6 +341,7 @@ class _NewLostPetState extends State<NewLostPet> {
                                   Radio(
                                     value: 'Young',
                                     groupValue: _selectedAge,
+                                    activeColor: Theme.of(context).primaryColor,
                                     onChanged: (value) {
                                       setState(() {
                                         _selectedAge = value.toString();
@@ -312,6 +357,7 @@ class _NewLostPetState extends State<NewLostPet> {
                                 Radio(
                                   value: 'Mature',
                                   groupValue: _selectedAge,
+                                  activeColor: Theme.of(context).primaryColor,
                                   onChanged: (value) {
                                     setState(() {
                                       _selectedAge = value.toString();
@@ -336,6 +382,7 @@ class _NewLostPetState extends State<NewLostPet> {
                                   Radio(
                                     value: 'Male',
                                     groupValue: _selectedGender,
+                                    activeColor: Theme.of(context).primaryColor,
                                     onChanged: (value) {
                                       setState(() {
                                         _selectedGender = value.toString();
@@ -351,6 +398,7 @@ class _NewLostPetState extends State<NewLostPet> {
                                 Radio(
                                   value: 'Female',
                                   groupValue: _selectedGender,
+                                  activeColor: Theme.of(context).primaryColor,
                                   onChanged: (value) {
                                     setState(() {
                                       _selectedGender = value.toString();
@@ -375,6 +423,7 @@ class _NewLostPetState extends State<NewLostPet> {
                                   Radio(
                                     value: true,
                                     groupValue: _collar,
+                                    activeColor: Theme.of(context).primaryColor,
                                     onChanged: (value) {
                                       setState(() {
                                         _collar = value!;
@@ -390,6 +439,7 @@ class _NewLostPetState extends State<NewLostPet> {
                                 Radio(
                                   value: false,
                                   groupValue: _collar,
+                                  activeColor: Theme.of(context).primaryColor,
                                   onChanged: (value) {
                                     setState(() {
                                       _collar = value!;
@@ -403,10 +453,10 @@ class _NewLostPetState extends State<NewLostPet> {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 15),
                     Row(
                       children: [
                         Container(
-                          margin: const EdgeInsets.only(top: 10.0),
                           child: const Text(
                             'Found place:',
                             style: TextStyle(fontSize: 14),
@@ -415,20 +465,34 @@ class _NewLostPetState extends State<NewLostPet> {
                         ),
                         const SizedBox(width: 15),
                         Expanded(
-                          child: TextField(
-                            decoration: const InputDecoration(
-                              hintText: '',
+                          child: SizedBox(
+                            height: 30,
+                            child: TextField(
+                              decoration: InputDecoration(
+                                contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(40),
+                                  borderSide: BorderSide.none,
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(40),
+                                  borderSide: const BorderSide(color: Colors.blue),
+                                ),
+                                hintText: '',
+                                fillColor: Colors.green,
+                                filled: true,
+                              ),
+                              controller: _foundPlaceController,
+                              onSubmitted: (_) => _submitData(),
                             ),
-                            controller: _foundPlaceController,
-                            onSubmitted: (_) => _submitData(),
                           ),
                         ),
                       ],
                     ),
+                    const SizedBox(height: 15),
                     Row(
                       children: [
                         Container(
-                          margin: const EdgeInsets.only(top: 10.0),
                           child: const Text(
                             'Person name:',
                             style: TextStyle(fontSize: 14),
@@ -437,20 +501,34 @@ class _NewLostPetState extends State<NewLostPet> {
                         ),
                         const SizedBox(width: 15),
                         Expanded(
-                          child: TextField(
-                            decoration: const InputDecoration(
-                              hintText: '',
+                          child: SizedBox(
+                            height: 30,
+                            child: TextField(
+                              decoration: InputDecoration(
+                                contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(40),
+                                  borderSide: BorderSide.none,
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(40),
+                                  borderSide: const BorderSide(color: Colors.blue),
+                                ),
+                                hintText: '',
+                                fillColor: Colors.green,
+                                filled: true,
+                              ),
+                              controller: _personNameController,
+                              onSubmitted: (_) => _submitData(),
                             ),
-                            controller: _personNameController,
-                            onSubmitted: (_) => _submitData(),
                           ),
                         ),
                       ],
                     ),
+                    const SizedBox(height: 15),
                     Row(
                       children: [
                         Container(
-                          margin: const EdgeInsets.only(top: 10.0),
                           child: const Text(
                             'Contact phone:',
                             style: TextStyle(fontSize: 14),
@@ -459,12 +537,26 @@ class _NewLostPetState extends State<NewLostPet> {
                         ),
                         const SizedBox(width: 15),
                         Expanded(
-                          child: TextField(
-                            decoration: const InputDecoration(
-                              hintText: '',
+                          child: SizedBox(
+                            height: 30,
+                            child: TextField(
+                              decoration: InputDecoration(
+                                contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(40),
+                                  borderSide: BorderSide.none,
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(40),
+                                  borderSide: const BorderSide(color: Colors.blue),
+                                ),
+                                hintText: '',
+                                fillColor: Colors.green,
+                                filled: true,
+                              ),
+                              controller: _contactPhoneController,
+                              onSubmitted: (_) => _submitData(),
                             ),
-                            controller: _contactPhoneController,
-                            onSubmitted: (_) => _submitData(),
                           ),
                         ),
                       ],
