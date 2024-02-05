@@ -15,6 +15,7 @@ class HomeScreen extends StatelessWidget {
       title: 'Rescue Pets',
       theme: ThemeData(
         primaryColor: Color.fromRGBO(27, 53, 86, 1.0),
+          scaffoldBackgroundColor: Colors.white
       ),
       home: Home(),
     );
@@ -62,7 +63,7 @@ class Home extends StatelessWidget {
             SizedBox(height: 20),
             ElevatedButton.icon(
               icon: Icon(Icons.pets_outlined, size: 24, color: Colors.white),
-              label: Text('Report pet'),
+              label: Text('Missing pets', style: TextStyle(color: Colors.white)),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -71,7 +72,6 @@ class Home extends StatelessWidget {
               },
               style: ElevatedButton.styleFrom(
                 primary: Color.fromRGBO(27, 53, 86, 1.0),
-                // Adjust the button color as needed
                 padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -81,7 +81,7 @@ class Home extends StatelessWidget {
             SizedBox(height: 20),
             ElevatedButton.icon(
               icon: Icon(Icons.pets_outlined, size: 24, color: Colors.white),
-              label: Text('List of pets'),
+              label: Text('Found pets', style: TextStyle(color: Colors.white)),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -91,7 +91,7 @@ class Home extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 primary: Color.fromRGBO(27, 53, 86, 1.0),
                 // Adjust the button color as needed
-                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+                padding: EdgeInsets.symmetric(horizontal: 55, vertical: 10),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),

@@ -23,6 +23,8 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
   FirebaseFirestore.instance.collection('foundPets');
   List<Post> _foundPets = [];
 
+
+
   @override
   void initState() {
     super.initState();
@@ -179,15 +181,16 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
                   ),
                 ],
               ),
+              const SizedBox(height: 15),
               Image.asset(
                 "lib/images/2cats1dog.jpg",
-                height: 110,
-                width: 400,
+                height: 100,
                 fit: BoxFit.fitWidth,
               ),
+              const SizedBox(height: 15),
               ElevatedButton(
                 onPressed: () => _addLostPet(),
-                child: Text('Add pet'),
+                child: Text('Report found pet', style: TextStyle(color: Colors.white)),
                 style: ElevatedButton.styleFrom(
                   primary: const Color.fromRGBO(27, 53, 86, 1.0),
                   elevation: 4,
@@ -220,7 +223,7 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
                     return GestureDetector(
                       onTap: () {},
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 5),
                         child: PetCard(
                           petType: items[index].petType,
                           breed: items[index].breed,

@@ -157,9 +157,10 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
                 width: 400,
                 fit: BoxFit.fitWidth,
               ),
+              const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () => _addLostPet(),
-                child: Text('Add pet'),
+                child: Text('Report missing pet', style: TextStyle(color: Colors.white)),
                 style: ElevatedButton.styleFrom(
                   primary: const Color.fromRGBO(27, 53, 86, 1.0),
                   elevation: 4,
@@ -192,7 +193,7 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
                     return GestureDetector(
                       onTap: () {},
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 5),
                         child: PetCard(
                           petType: items[index].petType,
                           breed: items[index].breed,

@@ -29,13 +29,13 @@ class PetCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Color.fromRGBO(230,235,245,1.0),
+      color: Color.fromRGBO(209,222,233, 1),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
       ),
       elevation: 2,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(10.0),
         child: Row(
           children: <Widget>[
             // Pet image
@@ -43,8 +43,8 @@ class PetCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(8.0),
               child: Image.network(
                 imageUrl,
-                width: 50,
-                height: 50,
+                width: 70,
+                height: 70,
                 fit: BoxFit.cover,
               ),
             ),
@@ -59,7 +59,8 @@ class PetCard extends StatelessWidget {
                       '$petType - $breed',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 14,
+                        fontSize: 16,
+                        fontStyle: FontStyle.italic,
                       ),
                     ),
                     // Pet details
