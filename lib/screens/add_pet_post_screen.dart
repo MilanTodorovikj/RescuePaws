@@ -212,9 +212,11 @@ class _NewLostPetState extends State<NewLostPet> {
         ),
         body: SingleChildScrollView(
           child: Card(
+            margin: EdgeInsets.symmetric(horizontal: 10),
             elevation: 5,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 25),
+              color: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 15),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
@@ -244,7 +246,7 @@ class _NewLostPetState extends State<NewLostPet> {
                                   borderSide: const BorderSide(color: Colors.blue),
                                 ),
                                 hintText: '',
-                                fillColor: Colors.green,
+                                fillColor: Color.fromRGBO(209, 222, 233, 1.0),
                                 filled: true,
                               ),
                               controller: _petTypeController,
@@ -279,7 +281,7 @@ class _NewLostPetState extends State<NewLostPet> {
                                   borderSide: const BorderSide(color: Colors.blue),
                                 ),
                                 hintText: '',
-                                fillColor: Colors.green,
+                                fillColor: Color.fromRGBO(209, 222, 233, 1.0),
                                 filled: true,
                               ),
                               controller: _breedController,
@@ -315,7 +317,7 @@ class _NewLostPetState extends State<NewLostPet> {
                                   borderSide: const BorderSide(color: Colors.blue),
                                 ),
                                 hintText: '',
-                                fillColor: Colors.green,
+                                fillColor: Color.fromRGBO(209, 222, 233, 1.0),
                                 filled: true,
                               ),
                               controller: _colorController,
@@ -479,7 +481,7 @@ class _NewLostPetState extends State<NewLostPet> {
                                   borderSide: const BorderSide(color: Colors.blue),
                                 ),
                                 hintText: '',
-                                fillColor: Colors.green,
+                                fillColor: Color.fromRGBO(209, 222, 233, 1.0),
                                 filled: true,
                               ),
                               controller: _foundPlaceController,
@@ -515,7 +517,7 @@ class _NewLostPetState extends State<NewLostPet> {
                                   borderSide: const BorderSide(color: Colors.blue),
                                 ),
                                 hintText: '',
-                                fillColor: Colors.green,
+                                fillColor: Color.fromRGBO(209, 222, 233, 1.0),
                                 filled: true,
                               ),
                               controller: _personNameController,
@@ -551,7 +553,7 @@ class _NewLostPetState extends State<NewLostPet> {
                                   borderSide: const BorderSide(color: Colors.blue),
                                 ),
                                 hintText: '',
-                                fillColor: Colors.green,
+                                fillColor: Color.fromRGBO(209, 222, 233, 1.0),
                                 filled: true,
                               ),
                               controller: _contactPhoneController,
@@ -625,7 +627,8 @@ class _NewLostPetState extends State<NewLostPet> {
                     )
                   ]),
             ),
-          ),
+          )
+
         ),
       ),
     );
