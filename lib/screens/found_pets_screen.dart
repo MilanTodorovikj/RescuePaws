@@ -19,8 +19,8 @@ class FoundPetsScreen extends StatefulWidget {
 }
 
 class _FoundPetsScreenState extends State<FoundPetsScreen> {
-  final CollectionReference _itemsCollection =
-  FirebaseFirestore.instance.collection('foundPets');
+  final Query _itemsCollection =
+  FirebaseFirestore.instance.collection('foundPets').orderBy('date', descending: true);
   List<Post> _foundPets = [];
 
 
