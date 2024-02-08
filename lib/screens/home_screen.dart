@@ -14,9 +14,8 @@ class HomeScreen extends StatelessWidget {
     return MaterialApp(
       title: 'Rescue Pets',
       theme: ThemeData(
-        primaryColor: Color.fromRGBO(27, 53, 86, 1.0),
-          scaffoldBackgroundColor: Colors.white
-      ),
+          primaryColor: Color.fromRGBO(27, 53, 86, 1.0),
+          scaffoldBackgroundColor: Colors.white),
       home: Home(),
     );
   }
@@ -63,11 +62,15 @@ class Home extends StatelessWidget {
             SizedBox(height: 20),
             ElevatedButton.icon(
               icon: Icon(Icons.pets_outlined, size: 24, color: Colors.white),
-              label: Text('Missing pets', style: TextStyle(color: Colors.white)),
+              label:
+                  Text('Missing pets', style: TextStyle(color: Colors.white)),
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => LostPetsScreen(postFactory: Post.defaultPost(),)),
+                  MaterialPageRoute(
+                      builder: (context) => LostPetsScreen(
+                            postFactory: Post.defaultPost(),
+                          )),
                 );
               },
               style: ElevatedButton.styleFrom(
@@ -85,7 +88,10 @@ class Home extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => FoundPetsScreen(postFactory: Post.defaultPost(),)),
+                  MaterialPageRoute(
+                      builder: (context) => FoundPetsScreen(
+                            postFactory: Post.defaultPost(),
+                          )),
                 );
               },
               style: ElevatedButton.styleFrom(

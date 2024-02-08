@@ -22,15 +22,14 @@ void main() async {
   runApp(const MyApp());
 }
 
-FlutterLocalNotificationsPlugin _notificationsPlugin = FlutterLocalNotificationsPlugin();
+FlutterLocalNotificationsPlugin _notificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 Future<void> display(RemoteMessage message) async {
   // To display the notification in device
   try {
     print(message.notification!.android!.sound);
-    final id = DateTime
-        .now()
-        .millisecondsSinceEpoch ~/ 1000;
+    final id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     NotificationDetails notificationDetails = NotificationDetails(
       android: AndroidNotificationDetails(
           message.notification!.android!.sound ?? "Channel Id",
@@ -54,8 +53,6 @@ Future<void> display(RemoteMessage message) async {
   }
 }
 
-
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -72,4 +69,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

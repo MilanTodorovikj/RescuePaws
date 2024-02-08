@@ -29,7 +29,7 @@ class PetCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Color.fromRGBO(209,222,233, 1),
+      color: Color.fromRGBO(209, 222, 233, 1),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
       ),
@@ -92,7 +92,10 @@ class PetCard extends StatelessWidget {
               ),
             ),
             IconButton(
-              icon: Icon(Icons.location_on, color: Color.fromRGBO(27, 53, 86, 1.0),),
+              icon: Icon(
+                Icons.location_on,
+                color: Color.fromRGBO(27, 53, 86, 1.0),
+              ),
               onPressed: onLocationPressed,
             ),
           ],

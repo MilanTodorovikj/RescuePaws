@@ -11,6 +11,7 @@ import 'home_screen.dart';
 
 class LostPetsScreen extends StatefulWidget {
   final PostFactory postFactory;
+
   const LostPetsScreen({super.key, required this.postFactory});
 
   @override
@@ -18,8 +19,9 @@ class LostPetsScreen extends StatefulWidget {
 }
 
 class _LostPetsScreenState extends State<LostPetsScreen> {
-  final Query _itemsCollection =
-  FirebaseFirestore.instance.collection('lostPets').orderBy('date', descending: true);
+  final Query _itemsCollection = FirebaseFirestore.instance
+      .collection('lostPets')
+      .orderBy('date', descending: true);
   List<Post> _lostPets = [];
 
   @override
@@ -28,7 +30,8 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
     super.initState();
   }
 
-  void _addNewLostPetToDatabase(String petType,
+  void _addNewLostPetToDatabase(
+      String petType,
       String breed,
       String color,
       String age,
@@ -39,21 +42,20 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
       String contactPhone,
       GeoPoint location,
       Map<String, dynamic> formData) async {
-
     String imagePath = formData['imagePath'] ?? '';
 
     addLostPet(
-        petType,
-        breed,
-        color,
-        age,
-        gender,
-        collar,
-        foundPlace,
-        personName,
-        contactPhone,
-        location,
-        imagePath,
+      petType,
+      breed,
+      color,
+      age,
+      gender,
+      collar,
+      foundPlace,
+      personName,
+      contactPhone,
+      location,
+      imagePath,
     );
   }
 
@@ -61,12 +63,12 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                NewLostPet(
-                    addLostPet: _addNewLostPetToDatabase, formType: "lost")));
+            builder: (context) => NewLostPet(
+                addLostPet: _addNewLostPetToDatabase, formType: "lost")));
   }
 
-  void addLostPet(String petType,
+  void addLostPet(
+      String petType,
       String breed,
       String color,
       String age,
@@ -77,8 +79,18 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
       String contactPhone,
       GeoPoint location,
       String imagePath) {
-
-    Post post = widget.postFactory.createLostPet(petType: petType, breed: breed, color: color, age: age, gender: gender, collar: collar, foundPlace: foundPlace, personName: personName, contactPhone: contactPhone, location: location, imagePath: imagePath);
+    Post post = widget.postFactory.createLostPet(
+        petType: petType,
+        breed: breed,
+        color: color,
+        age: age,
+        gender: gender,
+        collar: collar,
+        foundPlace: foundPlace,
+        personName: personName,
+        contactPhone: contactPhone,
+        location: location,
+        imagePath: imagePath);
   }
 
   void _launchGoogleMaps(GeoPoint location) async {
@@ -106,8 +118,7 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   PopupMenuButton<int>(
-                    itemBuilder: (context) =>
-                    [
+                    itemBuilder: (context) => [
                       const PopupMenuItem(
                         value: 1,
                         child: Text('Home'),
@@ -129,7 +140,9 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => FoundPetsScreen(postFactory: Post.defaultPost(),)),
+                                builder: (context) => FoundPetsScreen(
+                                      postFactory: Post.defaultPost(),
+                                    )),
                           );
                           break;
                       }
@@ -160,12 +173,14 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
               const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () => _addLostPet(),
-                child: Text('Report missing pet', style: TextStyle(color: Colors.white)),
+                child: Text('Report missing pet',
+                    style: TextStyle(color: Colors.white)),
                 style: ElevatedButton.styleFrom(
                   primary: const Color.fromRGBO(27, 53, 86, 1.0),
                   elevation: 4,
                   textStyle: const TextStyle(fontSize: 15),
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 40, vertical: 2),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -183,8 +198,8 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
                 if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 }
-                List<Post> items = snapshot.data!.docs.map((
-                    DocumentSnapshot doc) {
+                List<Post> items =
+                    snapshot.data!.docs.map((DocumentSnapshot doc) {
                   return Post.fromMap(doc.data() as Map<String, dynamic>);
                 }).toList();
                 return ListView.builder(
@@ -193,7 +208,8 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
                     return GestureDetector(
                       onTap: () {},
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 5),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 25, vertical: 5),
                         child: PetCard(
                           petType: items[index].petType,
                           breed: items[index].breed,
@@ -204,7 +220,9 @@ class _LostPetsScreenState extends State<LostPetsScreen> {
                           foundBy: items[index].personName,
                           contact: items[index].contactPhone,
                           imageUrl: items[index].imagePath,
-                          onLocationPressed: () {_launchGoogleMaps(items[index].location);},
+                          onLocationPressed: () {
+                            _launchGoogleMaps(items[index].location);
+                          },
                         ),
                       ),
                     );

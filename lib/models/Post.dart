@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'Post_factory.dart';
 
-class Post implements PostFactory{
+class Post implements PostFactory {
   String petType;
   String breed;
   String color;
@@ -16,7 +16,6 @@ class Post implements PostFactory{
   String personName;
   String contactPhone;
   DateTime date;
-
 
   Post({
     required this.petType,
@@ -52,10 +51,7 @@ class Post implements PostFactory{
 
   // Named constructor for creating an Exam from a Map
   factory Post.fromMap(Map<String, dynamic>? map) {
-    if (map == null ||
-        map['petType'] == null ||
-        map['date'] == null
-    ) {
+    if (map == null || map['petType'] == null || map['date'] == null) {
       return Post.defaultPost();
     }
 
@@ -88,14 +84,37 @@ class Post implements PostFactory{
       'contactPhone': contactPhone,
       'date': date,
       'location': location,
-      'imagePath' : imagePath,
+      'imagePath': imagePath,
     };
   }
 
   @override
-  Post createFoundPet({required String petType, required String breed, required String color, required String age, required String gender, required bool collar, required String foundPlace, required String personName, required String contactPhone, required GeoPoint location, required String imagePath}) {
+  Post createFoundPet(
+      {required String petType,
+      required String breed,
+      required String color,
+      required String age,
+      required String gender,
+      required bool collar,
+      required String foundPlace,
+      required String personName,
+      required String contactPhone,
+      required GeoPoint location,
+      required String imagePath}) {
     DateTime date = DateTime.now();
-    Post post = Post(petType: petType, breed: breed, color: color, age: age, gender: gender, collar: collar, foundPlace: foundPlace, personName: personName, contactPhone: contactPhone, date: date, location: location, imagePath: imagePath);
+    Post post = Post(
+        petType: petType,
+        breed: breed,
+        color: color,
+        age: age,
+        gender: gender,
+        collar: collar,
+        foundPlace: foundPlace,
+        personName: personName,
+        contactPhone: contactPhone,
+        date: date,
+        location: location,
+        imagePath: imagePath);
 
     FirebaseFirestore.instance.collection('foundPets').add({
       'petType': post.petType,
@@ -116,9 +135,32 @@ class Post implements PostFactory{
   }
 
   @override
-  Post createLostPet({required String petType, required String breed, required String color, required String age, required String gender, required bool collar, required String foundPlace, required String personName, required String contactPhone, required GeoPoint location, required String imagePath}) {
+  Post createLostPet(
+      {required String petType,
+      required String breed,
+      required String color,
+      required String age,
+      required String gender,
+      required bool collar,
+      required String foundPlace,
+      required String personName,
+      required String contactPhone,
+      required GeoPoint location,
+      required String imagePath}) {
     DateTime date = DateTime.now();
-    Post post = Post(petType: petType, breed: breed, color: color, age: age, gender: gender, collar: collar, foundPlace: foundPlace, personName: personName, contactPhone: contactPhone, date: date, location: location, imagePath: imagePath);
+    Post post = Post(
+        petType: petType,
+        breed: breed,
+        color: color,
+        age: age,
+        gender: gender,
+        collar: collar,
+        foundPlace: foundPlace,
+        personName: personName,
+        contactPhone: contactPhone,
+        date: date,
+        location: location,
+        imagePath: imagePath);
 
     FirebaseFirestore.instance.collection('lostPets').add({
       'petType': post.petType,
