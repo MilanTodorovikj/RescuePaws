@@ -151,6 +151,11 @@ class _NewLostPetState extends State<NewLostPet> {
       // Handle the captured image (save it to Firebase Storage or perform any other actions)
       if (imageFile != null) {
         await _uploadImageToStorage(imageFile);
+
+        // Update the image state to display the captured image
+        setState(() {
+          image = Image.file(File(imageFile.path));
+        });
       }
     } catch (e) {
       print("Error opening camera: $e");
@@ -612,6 +617,17 @@ class _NewLostPetState extends State<NewLostPet> {
                         ),
                       ],
                     ),
+                    if (image != null)
+                      Row(
+                        children: [
+                          Text('Uploaded image: '), // Text widget added
+                          Container(
+                            width: 200,
+                            height: 200,
+                            child: image,
+                          ),
+                        ],
+                      ),
                     Center(
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
