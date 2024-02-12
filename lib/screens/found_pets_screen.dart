@@ -79,41 +79,47 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
       String personName,
       String contactPhone,
       GeoPoint location,
-      String imagePath) async {
+      String imagePath,
+      ) async {
     Post post = widget.postFactory.createFoundPet(
-        petType: petType,
-        breed: breed,
-        color: color,
-        age: age,
-        gender: gender,
-        collar: collar,
-        foundPlace: foundPlace,
-        personName: personName,
-        contactPhone: contactPhone,
-        location: location,
-        imagePath: imagePath);
+      petType: petType,
+      breed: breed,
+      color: color,
+      age: age,
+      gender: gender,
+      collar: collar,
+      foundPlace: foundPlace,
+      personName: personName,
+      contactPhone: contactPhone,
+      location: location,
+      imagePath: imagePath,
+    );
 
     try {
+      // Get device state
       var deviceState = await OneSignal.shared.getDeviceState();
       String? playerId = deviceState?.userId;
 
       if (playerId != null && playerId.isNotEmpty) {
         print("playerId:" + playerId);
-        List<String> playerIds = [playerId];
 
+        // Create notification content
+        String notificationContent = "A new " +
+            post.petType +
+            " has been found.\nBreed: " +
+            post.breed +
+            ", color/pattern: " +
+            post.color +
+            ", gender: " +
+            post.gender +
+            " at: " +
+            post.foundPlace;
+
+        // Send notification to devices with the specified player IDs
         try {
           await OneSignal.shared.postNotification(OSCreateNotification(
-            playerIds: playerIds,
-            content: "A new " +
-                post.petType +
-                " has been found.\nBreed: " +
-                post.breed +
-                ", color/pattern: " +
-                post.color +
-                ", gender: " +
-                post.gender +
-                " at: " +
-                post.foundPlace,
+            playerIds: [playerId],
+            content: notificationContent,
             heading: "New Pet Found",
             bigPicture: post.imagePath,
           ));
