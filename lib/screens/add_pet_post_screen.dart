@@ -661,7 +661,7 @@ class _NewLostPetState extends State<NewLostPet> {
                   Row(
                     children: [
                       const Text(
-                        'Last seen:',
+                        'Take a picture:',
                         style: TextStyle(fontSize: 14),
                         textAlign: TextAlign.center,
                       ),
