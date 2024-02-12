@@ -101,50 +101,55 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
       var deviceState = await OneSignal.shared.getDeviceState();
       String? newPlayer = deviceState?.userId;
 
-      FirebaseFirestore.instance.collection('subscribersForFoundPetsNotification').add({
-        'playerId': newPlayer // Save the image path to Firestore
-      });
+      await FirebaseFirestore.instance
+          .collection('subscribersForFoundPetsNotification')
+          .add({'playerId': newPlayer}); // Save the newPlayer to Firestore
 
-      List<Subscriber> playerIdList = FirebaseFirestore.instance
-          .collection('subscribersForFoundPetsNotification').snapshots() as List<Subscriber>;
+      // Listen to the stream instead of trying to cast it to a list
+      FirebaseFirestore.instance
+          .collection('subscribersForFoundPetsNotification')
+          .snapshots()
+          .listen((QuerySnapshot querySnapshot) {
+        List<Subscriber> playerIdList = querySnapshot.docs.map((doc) {
+          return Subscriber.fromMap(doc.data() as Map<String, dynamic>);
+        }).toList();
 
-      List<String> playerId = playerIdList.map((e) => e.playerId).toList();
+        List<String> playerId = playerIdList.map((e) => e.playerId).toList();
 
-      if (playerId.isNotEmpty) {
-        // print("playerId:" + playerId);
+        print("playerId");
+        print(playerId);
 
-        // Create notification content
-        String notificationContent = "A new " +
-            post.petType +
-            " has been found.\nBreed: " +
-            post.breed +
-            ", color/pattern: " +
-            post.color +
-            ", gender: " +
-            post.gender +
-            " at: " +
-            post.foundPlace;
+        if (playerId.isNotEmpty) {
+          // Create notification content
+          String notificationContent = "A new " +
+              post.petType +
+              " has been found.\nBreed: " +
+              post.breed +
+              ", color/pattern: " +
+              post.color +
+              ", gender: " +
+              post.gender +
+              " at: " +
+              post.foundPlace;
 
-        // Send notification to devices with the specified player IDs
-        try {
-          await OneSignal.shared.postNotification(OSCreateNotification(
-            playerIds: playerId,
-            content: notificationContent,
-            heading: "New Pet Found",
-            bigPicture: post.imagePath,
-          ));
-
-        } catch (e) {
-          print("Error posting notification: $e");
+          // Send notification to devices with the specified player IDs
+          try {
+            OneSignal.shared.postNotification(OSCreateNotification(
+              playerIds: playerId,
+              content: notificationContent,
+              heading: "New Pet Found",
+              bigPicture: post.imagePath,
+            ));
+          } catch (e) {
+            print("Error posting notification: $e");
+          }
+        } else {
+          print("Player ID is null or empty.");
         }
-      } else {
-        print("Player ID is null or empty.");
-      }
+      });
     } catch (e) {
       print("Error getting device state: $e");
     }
-
-
   }
 
   void _launchGoogleMaps(GeoPoint location) async {
