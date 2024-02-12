@@ -101,20 +101,22 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
       var deviceState = await OneSignal.shared.getDeviceState();
       String? newPlayer = deviceState?.userId;
 
-      await FirebaseFirestore.instance
-          .collection('subscribersForFoundPetsNotification')
-          .add({'playerId': newPlayer}); // Save the newPlayer to Firestore
-
       // Listen to the stream instead of trying to cast it to a list
       FirebaseFirestore.instance
           .collection('subscribersForFoundPetsNotification')
           .snapshots()
-          .listen((QuerySnapshot querySnapshot) {
+          .listen((QuerySnapshot querySnapshot) async {
         List<Subscriber> playerIdList = querySnapshot.docs.map((doc) {
           return Subscriber.fromMap(doc.data() as Map<String, dynamic>);
         }).toList();
 
         List<String> playerId = playerIdList.map((e) => e.playerId).toList();
+
+        if (!playerId.contains(newPlayer)){
+          await FirebaseFirestore.instance
+              .collection('subscribersForFoundPetsNotification')
+              .add({'playerId': newPlayer});
+        }
 
         print("playerId");
         print(playerId);
