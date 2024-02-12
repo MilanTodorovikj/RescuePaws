@@ -7,6 +7,7 @@ import 'package:resecue_paws/screens/pet_card.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../models/Post_factory.dart';
+import '../models/Subscribers.dart';
 import 'add_pet_post_screen.dart';
 import 'home_screen.dart';
 
@@ -79,50 +80,73 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
       String personName,
       String contactPhone,
       GeoPoint location,
-      String imagePath) async {
+      String imagePath,
+      ) async {
     Post post = widget.postFactory.createFoundPet(
-        petType: petType,
-        breed: breed,
-        color: color,
-        age: age,
-        gender: gender,
-        collar: collar,
-        foundPlace: foundPlace,
-        personName: personName,
-        contactPhone: contactPhone,
-        location: location,
-        imagePath: imagePath);
+      petType: petType,
+      breed: breed,
+      color: color,
+      age: age,
+      gender: gender,
+      collar: collar,
+      foundPlace: foundPlace,
+      personName: personName,
+      contactPhone: contactPhone,
+      location: location,
+      imagePath: imagePath,
+    );
 
     try {
+      // Get device state
       var deviceState = await OneSignal.shared.getDeviceState();
-      String? playerId = deviceState?.userId;
+      String? newPlayer = deviceState?.userId;
 
-      if (playerId != null && playerId.isNotEmpty) {
-        print("playerId:" + playerId);
-        List<String> playerIds = [playerId];
+      await FirebaseFirestore.instance
+          .collection('subscribersForFoundPetsNotification')
+          .add({'playerId': newPlayer}); // Save the newPlayer to Firestore
 
-        try {
-          await OneSignal.shared.postNotification(OSCreateNotification(
-            playerIds: playerIds,
-            content: "A new " +
-                post.petType +
-                " has been found.\nBreed: " +
-                post.breed +
-                ", color/pattern: " +
-                post.color +
-                ", gender: " +
-                post.gender +
-                " at: " +
-                post.foundPlace,
-            heading: "New Pet Found",
-            bigPicture: post.imagePath,
-          ));
-        } catch (e) {
-          print("Error posting notification: $e");
+      // Listen to the stream instead of trying to cast it to a list
+      FirebaseFirestore.instance
+          .collection('subscribersForFoundPetsNotification')
+          .snapshots()
+          .listen((QuerySnapshot querySnapshot) {
+        List<Subscriber> playerIdList = querySnapshot.docs.map((doc) {
+          return Subscriber.fromMap(doc.data() as Map<String, dynamic>);
+        }).toList();
+
+        List<String> playerId = playerIdList.map((e) => e.playerId).toList();
+
+        print("playerId");
+        print(playerId);
+
+        if (playerId.isNotEmpty) {
+          // Create notification content
+          String notificationContent = "A new " +
+              post.petType +
+              " has been found.\nBreed: " +
+              post.breed +
+              ", color/pattern: " +
+              post.color +
+              ", gender: " +
+              post.gender +
+              " at: " +
+              post.foundPlace;
+
+          // Send notification to devices with the specified player IDs
+          try {
+            OneSignal.shared.postNotification(OSCreateNotification(
+              playerIds: playerId,
+              content: notificationContent,
+              heading: "New Pet Found",
+              bigPicture: post.imagePath,
+            ));
+          } catch (e) {
+            print("Error posting notification: $e");
+          }
+        } else {
+          print("Player ID is null or empty.");
         }
-      } else {
-        print("Player ID is null or empty.");
-      }
+      });
     } catch (e) {
       print("Error getting device state: $e");
     }
