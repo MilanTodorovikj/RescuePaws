@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart' as geocoding;
 import 'package:location/location.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -27,29 +28,26 @@ class _NewLostPetState extends State<NewLostPet> {
   final _foundPlaceController = TextEditingController();
   final _personNameController = TextEditingController();
   final _contactPhoneController = TextEditingController();
-  GeoPoint? _selectedLocation; // Store the selected location
+  GeoPoint? _selectedLocation;
+  GeoPoint? _defaultLocation;
   String _selectedGender = "";
   String _selectedAge = "";
   bool _collar = true;
   var firstCamera;
   var image;
   var image_url;
+  String _address = "";
 
   @override
   void initState() {
     super.initState();
-
     this.initCameras();
-
-    // Initialize the selected location to a default value or null
-    _selectedLocation = GeoPoint(37.7749, -122.4194); // Default: San Francisco
+    _selectedLocation = _defaultLocation =
+        GeoPoint(37.7749, -122.4194); // Default: San Francisco
   }
 
   Future<void> initCameras() async {
-    // Obtain a list of the available cameras on the device.
     final cameras = await availableCameras();
-
-    // Get the main camera from the list of available cameras.
     firstCamera = cameras.first;
   }
 
@@ -70,6 +68,8 @@ class _NewLostPetState extends State<NewLostPet> {
     if (selectedLocation != null) {
       setState(() {
         _selectedLocation = selectedLocation;
+        _getLocationInfo(
+            selectedLocation.latitude, selectedLocation.longitude);
       });
     }
   }
@@ -97,6 +97,29 @@ class _NewLostPetState extends State<NewLostPet> {
 
     return await location.getLocation();
   }
+
+  void _getLocationInfo(double latitude, double longitude) async {
+    List<geocoding.Placemark> placemarks =
+    await geocoding.placemarkFromCoordinates(latitude, longitude);
+    if (placemarks.isNotEmpty) {
+      geocoding.Placemark nearestPlace = placemarks.first;
+      String subLocality = nearestPlace.subLocality ?? '';
+      String locality = nearestPlace.locality ?? '';
+      String country = nearestPlace.country ?? '';
+      String administrativeArea  = nearestPlace.administrativeArea ?? '';
+      String postalCode = nearestPlace.postalCode ?? '';
+      String street = nearestPlace.street ?? '';
+
+      String address = "${street}, ${subLocality}, ${locality}, ${administrativeArea} ${postalCode}, ${country}";
+
+      print('Location Information:\n$address');
+
+      setState(() {
+        _address = address ?? '';
+      });
+    }
+  }
+
 
   void _submitData() {
     final petType = _petTypeController.text;
@@ -148,9 +171,12 @@ class _NewLostPetState extends State<NewLostPet> {
         ),
       );
 
-      // Handle the captured image (save it to Firebase Storage or perform any other actions)
       if (imageFile != null) {
         await _uploadImageToStorage(imageFile);
+
+        setState(() {
+          image = Image.file(File(imageFile.path));
+        });
       }
     } catch (e) {
       print("Error opening camera: $e");
@@ -211,153 +237,143 @@ class _NewLostPetState extends State<NewLostPet> {
           ]),
         ),
         body: SingleChildScrollView(
-          child: Card(
-            margin: EdgeInsets.symmetric(horizontal: 10),
-            elevation: 5,
-            child: Container(
-              color: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    const SizedBox(height: 15),
-                    Row(
-                      children: [
-                        Container(
-                          child: const Text(
-                            'Pet type:',
-                            style: TextStyle(fontSize: 14),
-                            textAlign: TextAlign.center,
-                          ),
+            child: Card(
+          margin: EdgeInsets.symmetric(horizontal: 10),
+          elevation: 5,
+          child: Container(
+            color: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  const SizedBox(height: 15),
+                  Row(
+                    children: [
+                      Container(
+                        child: const Text(
+                          'Pet type:',
+                          style: TextStyle(fontSize: 14),
+                          textAlign: TextAlign.center,
                         ),
-                        const SizedBox(width: 15),
-                        Expanded(
-                          child: SizedBox(
-                            height: 30,
-                            child: TextField(
-                              decoration: InputDecoration(
-                                contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(40),
-                                  borderSide: BorderSide.none,
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(40),
-                                  borderSide: const BorderSide(color: Colors.blue),
-                                ),
-                                hintText: '',
-                                fillColor: Color.fromRGBO(209, 222, 233, 1.0),
-                                filled: true,
+                      ),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: SizedBox(
+                          height: 30,
+                          child: TextField(
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 10),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(40),
+                                borderSide: BorderSide.none,
                               ),
-                              controller: _petTypeController,
-                              onSubmitted: (_) => _submitData(),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 15),
-                    Row(
-                      children: [
-                        Container(
-                          child: const Text(
-                            'Breed:',
-                            style: TextStyle(fontSize: 14),
-                          ),
-                        ),
-                        const SizedBox(width: 15),
-                        Expanded(
-                          child: SizedBox(
-                            height: 30,
-                            child: TextField(
-                              decoration: InputDecoration(
-                                contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(40),
-                                  borderSide: BorderSide.none,
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(40),
-                                  borderSide: const BorderSide(color: Colors.blue),
-                                ),
-                                hintText: '',
-                                fillColor: Color.fromRGBO(209, 222, 233, 1.0),
-                                filled: true,
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(40),
+                                borderSide:
+                                    const BorderSide(color: Colors.blue),
                               ),
-                              controller: _breedController,
-                              onSubmitted: (_) => _submitData(),
+                              hintText: '',
+                              fillColor: Color.fromRGBO(209, 222, 233, 1.0),
+                              filled: true,
                             ),
+                            controller: _petTypeController,
+                            onSubmitted: (_) => _submitData(),
                           ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 15),
-                    Row(
-                      children: [
-                        Container(
-                          child: const Text(
-                            'Color/Pattern:',
-                            style: TextStyle(fontSize: 14),
-                            textAlign: TextAlign.center,
-                          ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 15),
+                  Row(
+                    children: [
+                      Container(
+                        child: const Text(
+                          'Breed:',
+                          style: TextStyle(fontSize: 14),
                         ),
-                        const SizedBox(width: 15),
-                        Expanded(
-                          child: SizedBox(
-                            height: 30,
-                            child: TextField(
-                              decoration: InputDecoration(
-                                contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(40),
-                                  borderSide: BorderSide.none,
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(40),
-                                  borderSide: const BorderSide(color: Colors.blue),
-                                ),
-                                hintText: '',
-                                fillColor: Color.fromRGBO(209, 222, 233, 1.0),
-                                filled: true,
+                      ),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: SizedBox(
+                          height: 30,
+                          child: TextField(
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 10),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(40),
+                                borderSide: BorderSide.none,
                               ),
-                              controller: _colorController,
-                              onSubmitted: (_) => _submitData(),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(40),
+                                borderSide:
+                                    const BorderSide(color: Colors.blue),
+                              ),
+                              hintText: '',
+                              fillColor: Color.fromRGBO(209, 222, 233, 1.0),
+                              filled: true,
                             ),
+                            controller: _breedController,
+                            onSubmitted: (_) => _submitData(),
                           ),
                         ),
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const SizedBox(
-                              width: 70,
-                              child: Text('Age:'),
-                            ),
-                            SizedBox(
-                              width: 110,
-                              child: Row(
-                                children: [
-                                  Radio(
-                                    value: 'Young',
-                                    groupValue: _selectedAge,
-                                    activeColor: Theme.of(context).primaryColor,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _selectedAge = value.toString();
-                                      });
-                                    },
-                                  ),
-                                  const Text('Young'),
-                                ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 15),
+                  Row(
+                    children: [
+                      Container(
+                        child: const Text(
+                          'Color/Pattern:',
+                          style: TextStyle(fontSize: 14),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: SizedBox(
+                          height: 30,
+                          child: TextField(
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 10),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(40),
+                                borderSide: BorderSide.none,
                               ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(40),
+                                borderSide:
+                                    const BorderSide(color: Colors.blue),
+                              ),
+                              hintText: '',
+                              fillColor: Color.fromRGBO(209, 222, 233, 1.0),
+                              filled: true,
                             ),
-                            Row(
+                            controller: _colorController,
+                            onSubmitted: (_) => _submitData(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const SizedBox(
+                            width: 70,
+                            child: Text('Age:'),
+                          ),
+                          SizedBox(
+                            width: 110,
+                            child: Row(
                               children: [
                                 Radio(
-                                  value: 'Mature',
+                                  value: 'Young',
                                   groupValue: _selectedAge,
                                   activeColor: Theme.of(context).primaryColor,
                                   onChanged: (value) {
@@ -366,39 +382,39 @@ class _NewLostPetState extends State<NewLostPet> {
                                     });
                                   },
                                 ),
-                                const Text('Mature'),
+                                const Text('Young'),
                               ],
                             ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            const SizedBox(
-                              width: 70,
-                              child: Text('Gender:'),
-                            ),
-                            SizedBox(
-                              width: 110,
-                              child: Row(
-                                children: [
-                                  Radio(
-                                    value: 'Male',
-                                    groupValue: _selectedGender,
-                                    activeColor: Theme.of(context).primaryColor,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _selectedGender = value.toString();
-                                      });
-                                    },
-                                  ),
-                                  const Text('Male'),
-                                ],
+                          ),
+                          Row(
+                            children: [
+                              Radio(
+                                value: 'Mature',
+                                groupValue: _selectedAge,
+                                activeColor: Theme.of(context).primaryColor,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _selectedAge = value.toString();
+                                  });
+                                },
                               ),
-                            ),
-                            Row(
+                              const Text('Mature'),
+                            ],
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          const SizedBox(
+                            width: 70,
+                            child: Text('Gender:'),
+                          ),
+                          SizedBox(
+                            width: 110,
+                            child: Row(
                               children: [
                                 Radio(
-                                  value: 'Female',
+                                  value: 'Male',
                                   groupValue: _selectedGender,
                                   activeColor: Theme.of(context).primaryColor,
                                   onChanged: (value) {
@@ -407,39 +423,39 @@ class _NewLostPetState extends State<NewLostPet> {
                                     });
                                   },
                                 ),
-                                const Text('Female'),
+                                const Text('Male'),
                               ],
                             ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Container(
-                              width: 70,
-                              child: const Text('Collar:'),
-                            ),
-                            SizedBox(
-                              width: 110,
-                              child: Row(
-                                children: [
-                                  Radio(
-                                    value: true,
-                                    groupValue: _collar,
-                                    activeColor: Theme.of(context).primaryColor,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _collar = value!;
-                                      });
-                                    },
-                                  ),
-                                  const Text('Yes'),
-                                ],
+                          ),
+                          Row(
+                            children: [
+                              Radio(
+                                value: 'Female',
+                                groupValue: _selectedGender,
+                                activeColor: Theme.of(context).primaryColor,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _selectedGender = value.toString();
+                                  });
+                                },
                               ),
-                            ),
-                            Row(
+                              const Text('Female'),
+                            ],
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Container(
+                            width: 70,
+                            child: const Text('Collar:'),
+                          ),
+                          SizedBox(
+                            width: 110,
+                            child: Row(
                               children: [
                                 Radio(
-                                  value: false,
+                                  value: true,
                                   groupValue: _collar,
                                   activeColor: Theme.of(context).primaryColor,
                                   onChanged: (value) {
@@ -448,188 +464,251 @@ class _NewLostPetState extends State<NewLostPet> {
                                     });
                                   },
                                 ),
-                                const Text('No'),
+                                const Text('Yes'),
                               ],
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 15),
-                    Row(
-                      children: [
-                        Container(
-                          child: const Text(
-                            'Found place:',
-                            style: TextStyle(fontSize: 14),
-                            textAlign: TextAlign.center,
                           ),
-                        ),
-                        const SizedBox(width: 15),
-                        Expanded(
-                          child: SizedBox(
-                            height: 30,
-                            child: TextField(
-                              decoration: InputDecoration(
-                                contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(40),
-                                  borderSide: BorderSide.none,
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(40),
-                                  borderSide: const BorderSide(color: Colors.blue),
-                                ),
-                                hintText: '',
-                                fillColor: Color.fromRGBO(209, 222, 233, 1.0),
-                                filled: true,
+                          Row(
+                            children: [
+                              Radio(
+                                value: false,
+                                groupValue: _collar,
+                                activeColor: Theme.of(context).primaryColor,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _collar = value!;
+                                  });
+                                },
                               ),
-                              controller: _foundPlaceController,
-                              onSubmitted: (_) => _submitData(),
-                            ),
+                              const Text('No'),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 15),
-                    Row(
-                      children: [
-                        Container(
-                          child: const Text(
-                            'Person name:',
-                            style: TextStyle(fontSize: 14),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        const SizedBox(width: 15),
-                        Expanded(
-                          child: SizedBox(
-                            height: 30,
-                            child: TextField(
-                              decoration: InputDecoration(
-                                contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(40),
-                                  borderSide: BorderSide.none,
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(40),
-                                  borderSide: const BorderSide(color: Colors.blue),
-                                ),
-                                hintText: '',
-                                fillColor: Color.fromRGBO(209, 222, 233, 1.0),
-                                filled: true,
-                              ),
-                              controller: _personNameController,
-                              onSubmitted: (_) => _submitData(),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 15),
-                    Row(
-                      children: [
-                        Container(
-                          child: const Text(
-                            'Contact phone:',
-                            style: TextStyle(fontSize: 14),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        const SizedBox(width: 15),
-                        Expanded(
-                          child: SizedBox(
-                            height: 30,
-                            child: TextField(
-                              decoration: InputDecoration(
-                                contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(40),
-                                  borderSide: BorderSide.none,
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(40),
-                                  borderSide: const BorderSide(color: Colors.blue),
-                                ),
-                                hintText: '',
-                                fillColor: Color.fromRGBO(209, 222, 233, 1.0),
-                                filled: true,
-                              ),
-                              controller: _contactPhoneController,
-                              onSubmitted: (_) => _submitData(),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        const Text(
-                          'Location:',
-                          style: TextStyle(fontSize: 14),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(width: 15),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: _selectLocation,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Theme.of(context).primaryColor,
-                              foregroundColor: Colors.white,
-                              fixedSize: const Size.fromWidth(500),
-                            ),
-                            child: const Text(
-                              'Select Location',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        const Text(
-                          'Last seen:',
-                          style: TextStyle(fontSize: 14),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(width: 15),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: _openCamera,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Theme.of(context).primaryColor,
-                              foregroundColor: Colors.white,
-                              fixedSize: const Size.fromWidth(500),
-                            ),
-                            child: const Text(
-                              'Open Camera',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Center(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(context).primaryColor,
-                          foregroundColor: Colors.white,
-                          fixedSize: const Size.fromWidth(300),
-                        ),
-                        onPressed: () {
-                          _submitData();
-                        },
-                        child: const Text('Submit'),
+                        ],
                       ),
-                    )
-                  ]),
-            ),
-          )
+                    ],
+                  ),
+                  const SizedBox(height: 15),
+                  Row(
+                    children: [
+                      Container(
+                        child: const Text(
+                          'Found place:',
+                          style: TextStyle(fontSize: 14),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: SizedBox(
+                          height: 30,
+                          child: TextField(
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 10),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(40),
+                                borderSide: BorderSide.none,
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(40),
+                                borderSide:
+                                    const BorderSide(color: Colors.blue),
+                              ),
+                              hintText: '',
+                              fillColor: Color.fromRGBO(209, 222, 233, 1.0),
+                              filled: true,
+                            ),
+                            controller: _foundPlaceController,
+                            onSubmitted: (_) => _submitData(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 15),
+                  Row(
+                    children: [
+                      Container(
+                        child: const Text(
+                          'Person name:',
+                          style: TextStyle(fontSize: 14),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: SizedBox(
+                          height: 30,
+                          child: TextField(
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 10),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(40),
+                                borderSide: BorderSide.none,
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(40),
+                                borderSide:
+                                    const BorderSide(color: Colors.blue),
+                              ),
+                              hintText: '',
+                              fillColor: Color.fromRGBO(209, 222, 233, 1.0),
+                              filled: true,
+                            ),
+                            controller: _personNameController,
+                            onSubmitted: (_) => _submitData(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 15),
+                  Row(
+                    children: [
+                      Container(
+                        child: const Text(
+                          'Contact phone:',
+                          style: TextStyle(fontSize: 14),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: SizedBox(
+                          height: 30,
+                          child: TextField(
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 10),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(40),
+                                borderSide: BorderSide.none,
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(40),
+                                borderSide:
+                                    const BorderSide(color: Colors.blue),
+                              ),
+                              hintText: '',
+                              fillColor: Color.fromRGBO(209, 222, 233, 1.0),
+                              filled: true,
+                            ),
+                            controller: _contactPhoneController,
+                            onSubmitted: (_) => _submitData(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      const Text(
+                        'Location:',
+                        style: TextStyle(fontSize: 14),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: _selectLocation,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(context).primaryColor,
+                            foregroundColor: Colors.white,
+                            fixedSize: const Size.fromWidth(500),
+                          ),
+                          child: Text(
+                            _selectedLocation != null &&
+                                    _selectedLocation != _defaultLocation
+                                ? 'Select Another Location'
+                                : 'Select Location',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (_selectedLocation != null &&
+                      _selectedLocation != _defaultLocation)
+                    Row(
+                      children: [
+                        Text('Selected location: '),
+                        Flexible( // Wrap the address in a Flexible widget
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Latitude: ${_selectedLocation!.latitude.toStringAsFixed(5)}',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                'Longitude: ${_selectedLocation!.longitude.toStringAsFixed(5)}',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                'Address: $_address',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
 
-        ),
+                  Row(
+                    children: [
+                      const Text(
+                        'Last seen:',
+                        style: TextStyle(fontSize: 14),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: _openCamera,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(context).primaryColor,
+                            foregroundColor: Colors.white,
+                            fixedSize: const Size.fromWidth(500),
+                          ),
+                          child: const Text(
+                            'Open Camera',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (image != null)
+                    Row(
+                      children: [
+                        Text('Uploaded image: '), // Text widget added
+                        Container(
+                          width: 200,
+                          height: 200,
+                          child: image,
+                        ),
+                      ],
+                    ),
+                  Center(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).primaryColor,
+                        foregroundColor: Colors.white,
+                        fixedSize: const Size.fromWidth(300),
+                      ),
+                      onPressed: () {
+                        _submitData();
+                      },
+                      child: const Text('Submit'),
+                    ),
+                  )
+                ]),
+          ),
+        )),
       ),
     );
   }

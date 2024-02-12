@@ -12,6 +12,7 @@ import 'home_screen.dart';
 
 class FoundPetsScreen extends StatefulWidget {
   final PostFactory postFactory;
+
   const FoundPetsScreen({super.key, required this.postFactory});
 
   @override
@@ -19,18 +20,18 @@ class FoundPetsScreen extends StatefulWidget {
 }
 
 class _FoundPetsScreenState extends State<FoundPetsScreen> {
-  final Query _itemsCollection =
-  FirebaseFirestore.instance.collection('foundPets').orderBy('date', descending: true);
+  final Query _itemsCollection = FirebaseFirestore.instance
+      .collection('foundPets')
+      .orderBy('date', descending: true);
   List<Post> _foundPets = [];
-
-
 
   @override
   void initState() {
     super.initState();
   }
 
-  void _addNewLostPetToDatabase(String petType,
+  void _addNewLostPetToDatabase(
+      String petType,
       String breed,
       String color,
       String age,
@@ -63,12 +64,12 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                NewLostPet(
-                    addLostPet: _addNewLostPetToDatabase, formType: "found")));
+            builder: (context) => NewLostPet(
+                addLostPet: _addNewLostPetToDatabase, formType: "found")));
   }
 
-  Future<void> addLostPet(String petType,
+  Future<void> addLostPet(
+      String petType,
       String breed,
       String color,
       String age,
@@ -79,22 +80,40 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
       String contactPhone,
       GeoPoint location,
       String imagePath) async {
-    Post post = widget.postFactory.createFoundPet(petType: petType, breed: breed, color: color, age: age, gender: gender, collar: collar, foundPlace: foundPlace, personName: personName, contactPhone: contactPhone, location: location, imagePath: imagePath);
+    Post post = widget.postFactory.createFoundPet(
+        petType: petType,
+        breed: breed,
+        color: color,
+        age: age,
+        gender: gender,
+        collar: collar,
+        foundPlace: foundPlace,
+        personName: personName,
+        contactPhone: contactPhone,
+        location: location,
+        imagePath: imagePath);
 
     try {
       var deviceState = await OneSignal.shared.getDeviceState();
       String? playerId = deviceState?.userId;
 
-
-
       if (playerId != null && playerId.isNotEmpty) {
-        print("playerId:"+playerId);
+        print("playerId:" + playerId);
         List<String> playerIds = [playerId];
 
         try {
           await OneSignal.shared.postNotification(OSCreateNotification(
             playerIds: playerIds,
-            content: "A new "+post.petType+" has been found.\nBreed: " + post.breed+", color/pattern: " +post.color+", gender: "+post.gender+" at: " +post.foundPlace,
+            content: "A new " +
+                post.petType +
+                " has been found.\nBreed: " +
+                post.breed +
+                ", color/pattern: " +
+                post.color +
+                ", gender: " +
+                post.gender +
+                " at: " +
+                post.foundPlace,
             heading: "New Pet Found",
             bigPicture: post.imagePath,
           ));
@@ -107,8 +126,6 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
     } catch (e) {
       print("Error getting device state: $e");
     }
-
-
   }
 
   void _launchGoogleMaps(GeoPoint location) async {
@@ -136,8 +153,7 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   PopupMenuButton<int>(
-                    itemBuilder: (context) =>
-                    [
+                    itemBuilder: (context) => [
                       const PopupMenuItem(
                         value: 1,
                         child: Text('Home'),
@@ -159,7 +175,9 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => LostPetsScreen(postFactory: Post.defaultPost(),)),
+                                builder: (context) => LostPetsScreen(
+                                      postFactory: Post.defaultPost(),
+                                    )),
                           );
                           break;
                       }
@@ -190,12 +208,14 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
               const SizedBox(height: 15),
               ElevatedButton(
                 onPressed: () => _addLostPet(),
-                child: Text('Report found pet', style: TextStyle(color: Colors.white)),
+                child: Text('Report found pet',
+                    style: TextStyle(color: Colors.white)),
                 style: ElevatedButton.styleFrom(
                   primary: const Color.fromRGBO(27, 53, 86, 1.0),
                   elevation: 4,
                   textStyle: const TextStyle(fontSize: 15),
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 40, vertical: 2),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -213,8 +233,8 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
                 if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 }
-                List<Post> items = snapshot.data!.docs.map((
-                    DocumentSnapshot doc) {
+                List<Post> items =
+                    snapshot.data!.docs.map((DocumentSnapshot doc) {
                   return Post.fromMap(doc.data() as Map<String, dynamic>);
                 }).toList();
                 return ListView.builder(
@@ -223,7 +243,8 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
                     return GestureDetector(
                       onTap: () {},
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 5),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 25, vertical: 5),
                         child: PetCard(
                           petType: items[index].petType,
                           breed: items[index].breed,
@@ -234,7 +255,9 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
                           foundBy: items[index].personName,
                           contact: items[index].contactPhone,
                           imageUrl: items[index].imagePath,
-                          onLocationPressed: () {_launchGoogleMaps(items[index].location);},
+                          onLocationPressed: () {
+                            _launchGoogleMaps(items[index].location);
+                          },
                         ),
                       ),
                     );

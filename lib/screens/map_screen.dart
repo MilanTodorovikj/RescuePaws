@@ -30,7 +30,8 @@ class _MapScreenState extends State<MapScreen> {
 
   void _onMapTap(LatLng tappedLocation) {
     setState(() {
-      _selectedLocation = GeoPoint(tappedLocation.latitude, tappedLocation.longitude);
+      _selectedLocation =
+          GeoPoint(tappedLocation.latitude, tappedLocation.longitude);
     });
   }
 
