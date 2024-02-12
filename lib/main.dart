@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:resecue_paws/screens/home_screen.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
+
+import 'models/Subscribers.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +22,27 @@ void main() async {
 
   await OneSignal.shared.promptUserForPushNotificationPermission();
   FirebaseMessaging.instance.subscribeToTopic('foundPets');
+
+
+  var deviceState = await OneSignal.shared.getDeviceState();
+  String? newPlayer = deviceState?.userId;
+
+  FirebaseFirestore.instance
+      .collection('subscribersForFoundPetsNotification')
+      .snapshots()
+      .listen((QuerySnapshot querySnapshot) async {
+    List<Subscriber> playerIdList = querySnapshot.docs.map((doc) {
+      return Subscriber.fromMap(doc.data() as Map<String, dynamic>);
+    }).toList();
+
+    List<String> playerId = playerIdList.map((e) => e.playerId).toList();
+
+    if (!playerId.contains(newPlayer)) {
+      await FirebaseFirestore.instance
+          .collection('subscribersForFoundPetsNotification')
+          .add({'playerId': newPlayer});
+    }});
+
   runApp(const MyApp());
 }
 
