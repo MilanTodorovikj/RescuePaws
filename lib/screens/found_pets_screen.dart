@@ -7,6 +7,7 @@ import 'package:resecue_paws/screens/pet_card.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../models/Post_factory.dart';
+import '../models/Subscribers.dart';
 import 'add_pet_post_screen.dart';
 import 'home_screen.dart';
 
@@ -98,10 +99,19 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
     try {
       // Get device state
       var deviceState = await OneSignal.shared.getDeviceState();
-      String? playerId = deviceState?.userId;
+      String? newPlayer = deviceState?.userId;
 
-      if (playerId != null && playerId.isNotEmpty) {
-        print("playerId:" + playerId);
+      FirebaseFirestore.instance.collection('subscribersForFoundPetsNotification').add({
+        'playerId': newPlayer // Save the image path to Firestore
+      });
+
+      List<Subscriber> playerIdList = FirebaseFirestore.instance
+          .collection('subscribersForFoundPetsNotification').snapshots() as List<Subscriber>;
+
+      List<String> playerId = playerIdList.map((e) => e.playerId).toList();
+
+      if (playerId.isNotEmpty) {
+        // print("playerId:" + playerId);
 
         // Create notification content
         String notificationContent = "A new " +
@@ -118,11 +128,12 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
         // Send notification to devices with the specified player IDs
         try {
           await OneSignal.shared.postNotification(OSCreateNotification(
-            playerIds: [playerId],
+            playerIds: playerId,
             content: notificationContent,
             heading: "New Pet Found",
             bigPicture: post.imagePath,
           ));
+
         } catch (e) {
           print("Error posting notification: $e");
         }
@@ -132,6 +143,8 @@ class _FoundPetsScreenState extends State<FoundPetsScreen> {
     } catch (e) {
       print("Error getting device state: $e");
     }
+
+
   }
 
   void _launchGoogleMaps(GeoPoint location) async {
