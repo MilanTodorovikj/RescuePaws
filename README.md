@@ -1,16 +1,6 @@
-# resecue_paws
+# Rescue Paws
 
-A new Flutter project.
+RescuePaws претставува мобилна апликација со чија помош ќе може да се пријавуваат изгубени кучиња и мачиња. Секој корисник на апликацијата ќе може да пријави маче или куче кое е изгубено или најдено. Ќе има приказ на сите објави направени од сите корисници. 
 
-## Getting Started
+- [Link to documentation]([https://docs.flutter.dev/get-started/codelab](https://github.com/MilanTodorovikj/RescuePaws/blob/master/RescuePaws-Dokumentacija-MIS.pdf)https://github.com/MilanTodorovikj/RescuePaws/blob/master/RescuePaws-Dokumentacija-MIS.pdf)
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
